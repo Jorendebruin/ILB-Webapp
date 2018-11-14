@@ -1,0 +1,80 @@
+.c-instance {
+  background: white;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  border-top: 13px solid #9e9e9e;
+  border-radius: 3px 3px 0 0;
+
+  &.environment {
+    &--o { border-top-color: #673AB7; }
+    &--t { border-top-color: #4CAF50; }
+    &--a { border-top-color: #FF9800; }
+    &--p { border-top-color: #F44336; }
+  }
+
+  header {
+    text-align: center;
+
+    h1 {
+      margin: 0;
+      padding: .75em 0 0 0;
+      font-size: 1.75em;
+      font-weight: 600;
+    }
+    span {
+      color: #9e9e9e;
+      font-size: 0.75em;
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding: 0 0 0 1.5em;
+    margin: 0.5em 0;
+    li {
+      font-size: 0.75em;
+      padding: 0.5em 0;
+      display: flex;
+      align-items: center;
+      text-transform: capitalize;
+
+      &.state {
+        &--ok {
+          color: #4CAF50;
+          svg { fill: #4CAF50; }
+        }
+        &--warning {
+          color: #FF9800;
+          svg { fill: #FF9800; }
+        }
+        &--error {
+          color: #F44336;
+          svg { fill: #F44336; }
+        }
+      }
+
+      svg {
+        margin-right: 0.75em;
+        font-size: 1.5em;
+      }
+    }
+  }
+
+  button {
+    text-align: left;
+    border: none;
+    background: #EEEEEE;
+    height: 48px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin: 0 0.25em;
+      font-size: 2.5em;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
