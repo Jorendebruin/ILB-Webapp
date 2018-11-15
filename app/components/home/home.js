@@ -17,6 +17,7 @@ export default class Home extends React.Component {
     super();
     this.state = {
       instances: [],
+      sortBy: null,
       searchFilter: null,
       filters: [
         {
@@ -154,6 +155,12 @@ export default class Home extends React.Component {
     });
   }
 
+  sortInstancesBy(group) {
+    this.setState({
+      sortBy: group
+    });
+  }
+
   render() {
     var instances = this.state.instances
     // Filter the instances based on the filters
@@ -220,6 +227,41 @@ export default class Home extends React.Component {
 
       if(returnInstance) return instance;
     })
+    // Sort the instances
+    .sort((a, b) => {
+      // If no sort is applied, return the instance
+      if(!this.state.sortBy) return 0;
+
+      var aValue, bValue;
+
+      // sort by location
+      if(this.state.sortBy.toLowerCase() == 'locatie') {
+        aValue = a.location.location;
+        bValue = b.location.location;
+      }
+
+      // sort by region
+      if(this.state.sortBy.toLowerCase() == 'regio') {
+        aValue = a.location.availabilityZone;
+        bValue = b.location.availabilityZone;
+      }
+
+      // sort by environment
+      if(this.state.sortBy.toLowerCase() == 'omgeving') {
+        aValue = a.location.environment;
+        bValue = b.location.environment;
+      }
+
+      // sort by status
+      if(this.state.sortBy.toLowerCase() == 'status') {
+        aValue = a.instance.state;
+        bValue = b.instance.state;
+      }
+
+      if(aValue < bValue) return -1;
+      if(aValue > bValue) return 1;
+      return 0;
+    })
     // Put all the instances we are left with in some HTML
     .map((instance) => {
       return <div className="col-xs-3">
@@ -229,19 +271,24 @@ export default class Home extends React.Component {
 
     // Generate the filters
     var filters = this.state.filters.map((filterGroup) => {
-      return <section>
+      return <section className="filter-group">
         <h2>
           { filterGroup.icon == 'MdLocationOn' ? <MdLocationOn/> : null }
           { filterGroup.icon == 'MdGroupWork' ? <MdGroupWork/> : null }
           { filterGroup.icon == 'MdBlurCircular' ? <MdBlurCircular/> : null }
           { filterGroup.icon == 'MdExplore' ? <MdExplore/> : null }
           { filterGroup.verbose }
+          <div className="filter-group__sort" onClick={() => { this.sortInstancesBy(filterGroup.verbose); }}>
+            sort by
+          </div>
         </h2>
-        <ul>
+        <ul className="filters">
           {
             filterGroup.items.map((filter) => {
-              return <li onClick={() => { filter.active = !filter.active; this.updateFilters(); } }>
-                { filter.active ? <MdCheckBox /> : <MdCheckBoxOutlineBlank /> }
+              return <li className="filter" onClick={() => { filter.active = !filter.active; this.updateFilters(); } }>
+                <div className="filter__checkbox">
+                  { filter.active ? <MdCheckBox /> : <MdCheckBoxOutlineBlank /> }
+                </div>
                 { filter.colorCode != undefined ? <span className={`filter__color filter__color--${filter.colorCode}`}></span> : null }
                 <div>
                   { filter.verbose }

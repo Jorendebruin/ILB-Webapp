@@ -32,4 +32,43 @@
     }
   }
 
+  .sidebar {
+    .filter-group {
+      h2 {
+        display: flex;
+
+        &:hover {
+          .filter-group__sort {
+            display: block;
+          }
+        }
+
+        .filter-group__sort {
+          margin: 0.25em 0 0 1em;
+          font-size: 0.5em;
+          line-height: 1em;
+          color: #9e9e9e;
+          display: none;
+
+          &:hover {
+            color: black;
+            cursor: pointer;
+          }
+        }
+      }
+      .filters {
+        .filter {
+          &:hover {
+            cursor: pointer;
+          }
+          .filter__checkbox {
+            display: flex;
+            align-items: center;
+
+          }
+        }
+      }
+    }
+  }
+
 }
