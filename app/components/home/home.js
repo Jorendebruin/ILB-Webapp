@@ -308,7 +308,7 @@ export default class Home extends React.Component {
               <div className="search">
                 <MdSearch />
                 <input
-                  placeholder="zoeken"
+                  placeholder="Zoeken op locatie, regio, alias, name"
                   value={this.state.searchFilter}
                   onChange={this.updateSearchFilter.bind(this)}>
                 </input>

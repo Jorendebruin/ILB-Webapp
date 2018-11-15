@@ -75,6 +75,20 @@
 
 .dark {
   .homePage {
+    .search {
+      color: #bdbdbd;
+      background: #424242;
+      border-color: #212121;
+      input {
+        color: #bdbdbd;
+        background: #424242;
+      }
+    }
+    .scrollable {
+      .title {
+        color: #bdbdbd;
+      }
+    }
     .sidebar {
       .filter-group {
         h2 {
