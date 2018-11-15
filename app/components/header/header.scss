@@ -1,0 +1,13 @@
+header.main-header {
+  background-color: #222629;
+  color: white;
+
+  .branding {
+    display: flex;
+    align-items: center;
+    svg {
+      margin: 0 0.5em 0 0;
+      font-size: 1.5em;
+    }
+  }
+}

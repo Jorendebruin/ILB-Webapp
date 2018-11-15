@@ -13,39 +13,16 @@ body {
 }
 
 #app {
-  height: 100vh;
-  main {
-    > .row {
-      height: 100vh;
-    }
-  }
-}
-
-nav {
-  background-color: #222629;
-  color: white;
-
-  ul {
-    margin: 0;
-    list-style-type: none;
-    padding: 0;
-
-    li a {
-      display: block;
-      padding: 20px 60px;
-      color: rgba(255, 255, 255, 0.5);
-      text-decoration: none;
-      transition: color .25s, background-color .25s;
-
-      &:hover {
-        color: white;
-      }
-
-      .active{
-        color: white;
-        background-color: rgba(0, 0, 0, 0.2);
+  .wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    main {
+      flex-grow: 1;
+      display: flex;
+      > .row {
+        flex-grow: 1;
       }
     }
   }
-
 }
