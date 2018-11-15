@@ -1,6 +1,26 @@
 .homePage {
-  input.search {
-    width: 100%;
+  .search {
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    background: white;
+    border: 1px solid black;
+    font-size: 1.1em;
+
+    svg {
+      padding: 8px;
+    }
+
+    input {
+      padding: 8px 0;
+      flex-grow: 1;
+      border: none;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
   }
 
   .scrollable {
