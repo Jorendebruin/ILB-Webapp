@@ -226,7 +226,7 @@ export default class Home extends React.Component {
           <section className="row">
             <div className="col-xs-12">
               <input className="search" placeholder="zoeken"></input>
-              <h1>Instances ({instances.length})</h1>
+              <h1 className="title">Instances ({instances.length})</h1>
             </div>
           </section>
           <section className="row scroll-overflow">
