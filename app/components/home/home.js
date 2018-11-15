@@ -6,7 +6,8 @@ import {
   MdCheckBoxOutlineBlank,
   MdBlurCircular,
   MdGroupWork,
-  MdExplore
+  MdExplore,
+  MdSearch
 } from 'react-icons/md';
 
 import Instance from '../instance/instance';
@@ -16,6 +17,7 @@ export default class Home extends React.Component {
     super();
     this.state = {
       instances: [],
+      searchFilter: null,
       filters: [
         {
           verbose: "Locatie",
@@ -146,12 +148,17 @@ export default class Home extends React.Component {
     });
   }
 
+  updateSearchFilter(event) {
+    this.setState({
+      searchFilter: event.target.value
+    });
+  }
+
   render() {
-    var instances = this.state.instances.filter((instance) => {
-      var matchLocation = false;
-      var matchRegion = false;
-      var matchEnvironment = false;
-      var matchStatus = false;
+    var instances = this.state.instances
+    // Filter the instances based on the filters
+    .filter((instance) => {
+      var returnInstance = false;
 
       this.state.filters.map((filterGroup) => {
         filterGroup.items.filter((filter) => {
@@ -161,40 +168,66 @@ export default class Home extends React.Component {
           // location filter
           if(filterGroup.verbose.toLowerCase() == 'locatie') {
             if(instance.location.location.toLowerCase() == filter.matchValue.toLowerCase()) {
-              matchLocation = true;
+              returnInstance = true;
             }
           }
           // region filter
           if(filterGroup.verbose.toLowerCase() == 'regio') {
             if(instance.location.availabilityZone.toLowerCase() == filter.matchValue.toLowerCase()) {
-              matchRegion = true;
+              returnInstance = true;
             }
           }
           // Environment filter
           if(filterGroup.verbose.toLowerCase() == 'omgeving') {
             if(instance.location.environment == filter.matchValue) {
-              matchEnvironment = true;
+              returnInstance = true;
             }
           }
           // Status filter
           if(filterGroup.verbose.toLowerCase() == 'status') {
             if(instance.instance.state == filter.matchValue) {
-              matchStatus = true;
+              returnInstance = true;
             }
           }
         });
       });
 
-      if(matchLocation || matchRegion || matchEnvironment || matchStatus) {
-        return instance;
+      if(returnInstance) return instance;
+    })
+    // Filter the instances based on the search field
+    .filter((instance) => {
+      // If no search filter is applied, return the instance
+      if(!this.state.searchFilter) return instance;
+
+      var returnInstance = false;
+
+      // Check on location
+      if(instance.location.location.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+        returnInstance = true;
+      }
+      // Check on region
+      if(instance.location.availabilityZone.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+        returnInstance = true;
+      }
+      // Check on alias
+      if(instance.metadata.verbose.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+        returnInstance = true;
+      }
+      // Check on name
+      if(instance.metadata.name.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+        returnInstance = true;
       }
 
-    }).map((instance) => {
+      if(returnInstance) return instance;
+    })
+    // Put all the instances we are left with in some HTML
+    .map((instance) => {
       return <div className="col-xs-3">
         <Instance instance={instance} key={instance.metadata.instanceId}></Instance>
       </div>;
     });
 
+    // Generate the filters
     var filters = this.state.filters.map((filterGroup) => {
       return <section>
         <h2>
@@ -225,7 +258,14 @@ export default class Home extends React.Component {
         <section className="col-xs-9 scrollable">
           <section className="row">
             <div className="col-xs-12">
-              <input className="search" placeholder="zoeken"></input>
+              <div className="search">
+                <MdSearch />
+                <input
+                  placeholder="zoeken"
+                  value={this.state.searchFilter}
+                  onChange={this.updateSearchFilter.bind(this)}>
+                </input>
+              </div>
               <h1 className="title">Instances ({instances.length})</h1>
             </div>
           </section>
