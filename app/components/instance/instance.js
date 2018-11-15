@@ -1,6 +1,13 @@
 import React from 'react';
 
-import { MdLocationOn, MdWatchLater, MdCloud, MdHealing, MdExplore, MdPlayArrow } from 'react-icons/md';
+import {
+  MdLocationOn,
+  MdWatchLater,
+  MdCloud,
+  MdHealing,
+  MdExplore,
+  MdPlayArrow
+} from 'react-icons/md';
 
 export default class Home extends React.Component  {
   constructor(props) {
