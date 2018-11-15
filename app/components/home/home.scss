@@ -72,3 +72,21 @@
   }
 
 }
+
+.dark {
+  .homePage {
+    .sidebar {
+      .filter-group {
+        h2 {
+          .filter-group__sort {
+            color: #bdbdbd;
+
+            &:hover {
+              color: #F44336;
+            }
+          }
+        }
+      }
+    }
+  }
+}

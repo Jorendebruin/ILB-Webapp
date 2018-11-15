@@ -2,12 +2,23 @@ header.main-header {
   background-color: #222629;
   color: white;
 
-  .branding {
+  > div {
     display: flex;
     align-items: center;
     svg {
       margin: 0 0.5em 0 0;
+    }
+  }
+
+  .branding {
+    svg {
       font-size: 1.5em;
+    }
+  }
+
+  .night-modus {
+    &:hover {
+      cursor: pointer;
     }
   }
 }
