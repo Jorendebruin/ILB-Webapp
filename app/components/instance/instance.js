@@ -1,6 +1,13 @@
 import React from 'react';
 
-import { MdLocationOn, MdWatchLater, MdCloud, MdHealing, MdExplore, MdPlayArrow } from 'react-icons/md';
+import {
+  MdLocationOn,
+  MdWatchLater,
+  MdCloud,
+  MdHealing,
+  MdExplore,
+  MdPlayArrow
+} from 'react-icons/md';
 
 export default class Home extends React.Component  {
   constructor(props) {
@@ -63,7 +70,7 @@ export default class Home extends React.Component  {
             {this.state.instance.instance.state == 3 ? 'shutting down' : null}
             {this.state.instance.instance.state == 4 ? 'stopped' : null}
           </li>
-          <li className="state--warning">
+          <li className={this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'state--warning' : 'state--ok'}>
             <MdHealing />
             {this.state.instance.status.health.passed}/{this.state.instance.status.health.amount}
             &nbsp; checks
