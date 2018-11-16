@@ -110,7 +110,7 @@ export default class Home extends React.Component {
         .map((filter) => {
           // location filter
           if(filterGroup.verbose.toLowerCase() == 'locatie') {
-            if(instance.location.location.toLowerCase() == filter.matchValue.toLowerCase()) {
+            if(instance.location.branch.toLowerCase() == filter.matchValue.toLowerCase()) {
               returnInstance = true;
             }
           }
@@ -148,7 +148,7 @@ export default class Home extends React.Component {
       var searchString = this.state.searchFilter.toLowerCase().trim();
 
       // Check on location
-      if(instance.location.location.toLowerCase().includes(searchString)) {
+      if(instance.location.branch.toLowerCase().includes(searchString)) {
         returnInstance = true;
       }
       // Check on region
@@ -175,8 +175,8 @@ export default class Home extends React.Component {
 
       // sort by location
       if(this.state.sortBy.toLowerCase() == 'locatie') {
-        aValue = a.location.location;
-        bValue = b.location.location;
+        aValue = a.location.branch;
+        bValue = b.location.branch;
       }
 
       // sort by region
