@@ -80,15 +80,11 @@ export default class Home extends React.Component {
   }
 
   updateFilters() {
-    this.setState({
-      filters: this.state.filters
-    });
+    this.setState({ filters: this.state.filters });
   }
 
   updateSearchFilter(event) {
-    this.setState({
-      searchFilter: event.target.value
-    });
+    this.setState({ searchFilter: event.target.value });
   }
 
   sortInstancesBy(group) {
