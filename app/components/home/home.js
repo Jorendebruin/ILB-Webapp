@@ -26,12 +26,12 @@ export default class Home extends React.Component {
           items: [
             { verbose: "Aalsmeer", matchValue: "aalsmeer", active: true },
             { verbose: "Naaldwijk", matchValue: "naaldwijk", active: true },
-            { verbose: "Rijnswijk", matchValue: "rijnswijk", active: true },
+            { verbose: "Rijnsburg", matchValue: "rijnsburg", active: true },
             { verbose: "Generic", matchValue: "generic", active: true }
           ]
         },
         {
-          verbose: "Regio",
+          verbose: "Availability zone",
           icon: 'MdGroupWork',
           items: [
             { verbose: "Eu-west-1a", matchValue: "eu-west-1a", active: true },
@@ -110,7 +110,7 @@ export default class Home extends React.Component {
             }
           }
           // region filter
-          if(filterGroup.verbose.toLowerCase() == 'regio') {
+          if(filterGroup.verbose.toLowerCase() == 'availability zone') {
             if(instance.location.availabilityZone.toLowerCase() == filter.matchValue.toLowerCase()) {
               returnInstance = true;
             }
@@ -139,20 +139,23 @@ export default class Home extends React.Component {
 
       var returnInstance = false;
 
+      // 'clean' the input
+      var searchString = this.state.searchFilter.toLowerCase().trim();
+
       // Check on location
-      if(instance.location.location.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+      if(instance.location.location.toLowerCase().includes(searchString)) {
         returnInstance = true;
       }
       // Check on region
-      if(instance.location.availabilityZone.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+      if(instance.location.availabilityZone.toLowerCase().includes(searchString)) {
         returnInstance = true;
       }
       // Check on alias
-      if(instance.metadata.verbose.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+      if(instance.metadata.verbose.toLowerCase().includes(searchString)) {
         returnInstance = true;
       }
       // Check on name
-      if(instance.metadata.name.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+      if(instance.metadata.name.toLowerCase().includes(searchString)) {
         returnInstance = true;
       }
 
@@ -210,7 +213,7 @@ export default class Home extends React.Component {
           { filterGroup.icon == 'MdExplore' ? <MdExplore/> : null }
           { filterGroup.verbose }
           <div className="filter-group__sort" onClick={() => { this.sortInstancesBy(filterGroup.verbose); }}>
-            sort by
+            Sorteer op
           </div>
         </h2>
         <ul className="filters">
@@ -239,7 +242,7 @@ export default class Home extends React.Component {
               <div className="search">
                 <MdSearch />
                 <input
-                  placeholder="Zoeken op locatie, regio, alias, name"
+                  placeholder="Zoeken op locatie, availability zone, alias, name"
                   value={this.state.searchFilter}
                   onChange={this.updateSearchFilter.bind(this)}>
                 </input>
