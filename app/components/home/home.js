@@ -1,5 +1,7 @@
 import React from 'react';
 
+import axios from 'axios';
+
 import {
   MdLocationOn,
   MdCheckBox,
@@ -65,13 +67,16 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
-      var self = this;
-      fetch('https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/populate/',
-          {
-              headers: { 'Content-Type': 'application/json' }
-          })
-          .then(response => response.json())
-          .then(data => self.setState({ instances: data }));
+      var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
+      axios.get(gateway_url + 'populate/', {
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => {
+        this.setState({ instances: response.data });
+      })
+      .catch(error => {
+        console.log('error', error);
+      });
   }
 
   updateFilters() {
