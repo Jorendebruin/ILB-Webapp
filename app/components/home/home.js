@@ -31,7 +31,7 @@ export default class Home extends React.Component {
           ]
         },
         {
-          verbose: "Regio",
+          verbose: "Availability zone",
           icon: 'MdGroupWork',
           items: [
             { verbose: "Eu-west-1a", matchValue: "eu-west-1a", active: true },
@@ -110,7 +110,7 @@ export default class Home extends React.Component {
             }
           }
           // region filter
-          if(filterGroup.verbose.toLowerCase() == 'regio') {
+          if(filterGroup.verbose.toLowerCase() == 'availability zone') {
             if(instance.location.availabilityZone.toLowerCase() == filter.matchValue.toLowerCase()) {
               returnInstance = true;
             }
@@ -242,7 +242,7 @@ export default class Home extends React.Component {
               <div className="search">
                 <MdSearch />
                 <input
-                  placeholder="Zoeken op locatie, regio, alias, name"
+                  placeholder="Zoeken op locatie, availability zone, alias, name"
                   value={this.state.searchFilter}
                   onChange={this.updateSearchFilter.bind(this)}>
                 </input>
