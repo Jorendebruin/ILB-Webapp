@@ -26,7 +26,7 @@ export default class Home extends React.Component {
           items: [
             { verbose: "Aalsmeer", matchValue: "aalsmeer", active: true },
             { verbose: "Naaldwijk", matchValue: "naaldwijk", active: true },
-            { verbose: "Rijnswijk", matchValue: "rijnswijk", active: true },
+            { verbose: "Rijnsburg", matchValue: "rijnsburg", active: true },
             { verbose: "Generic", matchValue: "generic", active: true }
           ]
         },
