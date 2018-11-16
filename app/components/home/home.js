@@ -213,7 +213,7 @@ export default class Home extends React.Component {
           { filterGroup.icon == 'MdExplore' ? <MdExplore/> : null }
           { filterGroup.verbose }
           <div className="filter-group__sort" onClick={() => { this.sortInstancesBy(filterGroup.verbose); }}>
-            sort by
+            Sorteer op
           </div>
         </h2>
         <ul className="filters">
