@@ -97,7 +97,10 @@ export default class Home extends React.Component {
     var instances = this.state.instances
     // Filter the instances based on the filters
     .filter((instance) => {
-      var returnInstance = false;
+      var locationFilter = false;
+      var availabilityZoneFilter = false;
+      var environmentFilter = false;
+      var statusFilter = false;
 
       this.state.filters.map((filterGroup) => {
         filterGroup.items.filter((filter) => {
@@ -107,31 +110,32 @@ export default class Home extends React.Component {
           // location filter
           if(filterGroup.verbose.toLowerCase() == 'locatie') {
             if(instance.location.branch.toLowerCase() == filter.matchValue.toLowerCase()) {
-              returnInstance = true;
+              locationFilter = true;
             }
           }
           // region filter
           if(filterGroup.verbose.toLowerCase() == 'availability zone') {
             if(instance.location.availabilityZone.toLowerCase() == filter.matchValue.toLowerCase()) {
-              returnInstance = true;
+              availabilityZoneFilter = true;
             }
           }
           // Environment filter
           if(filterGroup.verbose.toLowerCase() == 'omgeving') {
             if(instance.location.environment == filter.matchValue) {
-              returnInstance = true;
+              environmentFilter = true;
             }
           }
           // Status filter
           if(filterGroup.verbose.toLowerCase() == 'status') {
             if(instance.instance.state == filter.matchValue) {
-              returnInstance = true;
+              statusFilter = true;
             }
           }
         });
       });
 
-      if(returnInstance) return instance;
+      if(locationFilter && availabilityZoneFilter && environmentFilter && statusFilter)
+        return instance;
     })
     // Filter the instances based on the search field
     .filter((instance) => {
