@@ -63,84 +63,13 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
-    var instances = [
-      {
-        metadata: {
-          name: 'rfh-jda-sql-prd-openstaging.rfh.private',
-          verbose: 'alx-oo-bt-001',
-          instanceId: 'i-7235cs2356as3456'
-        },
-        location: {
-          location: 'naaldwijk',
-          availabilityZone: 'eu-west-1a',
-          environment: 2,
-        },
-        instance: {
-          type: 't3.medium',
-          startuptime: new Date(),
-          state: 4
-        },
-        status: {
-          health: {
-            amount: 2,
-            passed: 2
-          },
-          alarm: 1
-        }
-      },
-      {
-        metadata: {
-          name: 'rfh-jda-sql-prd-openstaging.rfh.protected',
-          verbose: 'por-ex-ah-003',
-          instanceId: 'i-7235cs2356ae3456'
-        },
-        location: {
-          location: 'rijnswijk',
-          availabilityZone: 'eu-west-1b',
-          environment: 3,
-        },
-        instance: {
-          type: 't3.large',
-          startuptime: new Date(),
-          state: 4
-        },
-        status: {
-          health: {
-            amount: 2,
-            passed: 2
-          },
-          alarm: 1
-        }
-      },
-      {
-        metadata: {
-          name: 'rfh-jda-sql-prd-openstaging.rfh.public',
-          verbose: 'vtl-pl-bt-001',
-          instanceId: 'i-47535dsf647345kasdf'
-        },
-        location: {
-          location: 'aalsmeer',
-          availabilityZone: 'eu-west-1b',
-          environment: 1,
-        },
-        instance: {
-          type: 't3.large',
-          startuptime: new Date(),
-          state: 1
-        },
-        status: {
-          health: {
-            amount: 2,
-            passed: 1
-          },
-          alarm: 1
-        }
-      }
-    ];
-
-    this.setState({
-      instances: instances
-    });
+      var self = this;
+      fetch('https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/populate/',
+          {
+              headers: { 'Content-Type': 'application/json' }
+          })
+          .then(response => response.json())
+          .then(data => self.setState({ instances: data }));
   }
 
   updateFilters() {
