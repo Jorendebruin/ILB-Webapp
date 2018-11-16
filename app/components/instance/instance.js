@@ -101,7 +101,7 @@ export default class Home extends React.Component  {
         <ul>
           <li>
             <MdLocationOn />
-            {this.state.instance.location.location}
+            {this.state.instance.location.branch}
           </li>
           <li>
             <MdGroupWork />
