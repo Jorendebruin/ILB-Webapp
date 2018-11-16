@@ -203,8 +203,8 @@ export default class Home extends React.Component {
     })
     // Put all the instances we are left with in some HTML
     .map((instance) => {
-      return <div className="col-xs-3">
-        <Instance instance={instance} key={instance.metadata.instanceId}></Instance>
+      return <div className="col-xs-12 col-md-6 col-lg-3" key={instance.metadata.instanceId}>
+        <Instance instance={instance}></Instance>
       </div>;
     });
 
@@ -241,7 +241,7 @@ export default class Home extends React.Component {
 
     return (
       <div className="homePage row">
-        <section className="col-xs-9 scrollable">
+        <section className="col-xs-10 scrollable">
           <section className="row">
             <div className="col-xs-12">
               <div className="search">
@@ -259,7 +259,7 @@ export default class Home extends React.Component {
             { instances }
           </section>
         </section>
-        <aside className="sidebar col-xs-3">
+        <aside className="sidebar col-xs-2">
           <h1>Filters</h1>
           { filters }
         </aside>
