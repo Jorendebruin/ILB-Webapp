@@ -200,9 +200,10 @@ export default class Home extends React.Component {
       if(aValue < bValue) return -1;
       if(aValue > bValue) return 1;
       return 0;
-    })
+    });
+
     // Put all the instances we are left with in some HTML
-    .map((instance) => {
+    var htmlFormattedInstances = instances.map((instance) => {
       return <div className="col-xs-12 col-md-6 col-lg-3" key={instance.metadata.instanceId}>
         <Instance instance={instance}></Instance>
       </div>;
@@ -210,7 +211,7 @@ export default class Home extends React.Component {
 
     // Generate the filters
     var filters = this.state.filters.map((filterGroup) => {
-      return <section className="filter-group">
+      return <section key={filterGroup.verbose} className="filter-group">
         <h2>
           { filterGroup.icon == 'MdLocationOn' ? <MdLocationOn/> : null }
           { filterGroup.icon == 'MdGroupWork' ? <MdGroupWork/> : null }
@@ -218,13 +219,40 @@ export default class Home extends React.Component {
           { filterGroup.icon == 'MdExplore' ? <MdExplore/> : null }
           { filterGroup.verbose }
           <div className="filter-group__sort" onClick={() => { this.sortInstancesBy(filterGroup.verbose); }}>
-            Sorteer op
+            Sorteer
           </div>
         </h2>
         <ul className="filters">
           {
             filterGroup.items.map((filter) => {
-              return <li className="filter" onClick={() => { filter.active = !filter.active; this.updateFilters(); } }>
+              var amountLeft = 0;
+              switch(filterGroup.verbose.toLowerCase()) {
+                case 'locatie':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return (instance.location.branch.toLowerCase()) == filter.matchValue;
+                  }).length;
+                  break;
+                case 'availability zone':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return (instance.location.availabilityZone.toLowerCase()) == filter.matchValue;
+                  }).length;
+                  break;
+                case 'omgeving':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return instance.location.environment == filter.matchValue;
+                  }).length;
+                  break;
+                case 'status':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return instance.instance.state == filter.matchValue;
+                  }).length;
+                  break;
+              }
+              return <li key={filter.verbose} className="filter" onClick={() => { filter.active = !filter.active; this.updateFilters(); } }>
                 <div className="filter__checkbox">
                   { filter.active ? <MdCheckBox /> : <MdCheckBoxOutlineBlank /> }
                 </div>
@@ -232,6 +260,9 @@ export default class Home extends React.Component {
                 <div>
                   { filter.verbose }
                 </div>
+                <span className="filter__amount-left">
+                  ({ amountLeft })
+                </span>
               </li>
             })
           }
@@ -256,7 +287,7 @@ export default class Home extends React.Component {
             </div>
           </section>
           <section className="row scroll-overflow">
-            { instances }
+            { htmlFormattedInstances }
           </section>
         </section>
         <aside className="sidebar col-xs-2">
