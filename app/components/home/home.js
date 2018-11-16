@@ -27,7 +27,7 @@ export default class Home extends React.Component {
             { verbose: "Aalsmeer", matchValue: "aalsmeer", active: true },
             { verbose: "Naaldwijk", matchValue: "naaldwijk", active: true },
             { verbose: "Rijnswijk", matchValue: "rijnswijk", active: true },
-            { verbose: "Other", matchValue: "other", active: true }
+            { verbose: "Generic", matchValue: "generic", active: true }
           ]
         },
         {
@@ -42,20 +42,22 @@ export default class Home extends React.Component {
           verbose: "Omgeving",
           icon: 'MdBlurCircular',
           items: [
-            { verbose: "Ontwikkeling (O)", matchValue: 1, active: true, colorCode: "purple" },
-            { verbose: "Test (T)", matchValue: 2, active: true, colorCode: "green" },
-            { verbose: "Acceptatie (A)", matchValue: 3, active: true, colorCode: "orange" },
-            { verbose: "Productie (P)", matchValue: 4, active: true, colorCode: "red" }
+            { verbose: "O - Ontwikkeling", matchValue: 1, active: true, colorCode: "purple" },
+            { verbose: "T - Test", matchValue: 2, active: true, colorCode: "green" },
+            { verbose: "A - Acceptatie", matchValue: 3, active: true, colorCode: "orange" },
+            { verbose: "P - Productie", matchValue: 4, active: true, colorCode: "red" }
           ]
         },
         {
           verbose: "Status",
           icon: 'MdExplore',
           items: [
-            { verbose: "Starting up", matchValue: 1, active: true },
-            { verbose: "Running", matchValue: 2, active: true },
-            { verbose: "Shutting down", matchValue: 3, active: true },
-            { verbose: "Stopped", matchValue: 4, active: true }
+            { verbose: "Pending", matchValue: 0, active: true },
+            { verbose: "Running", matchValue: 16, active: true },
+            { verbose: "Shutting-down", matchValue: 32, active: true },
+            { verbose: "Terminated", matchValue: 48, active: true },
+            { verbose: "Stopping", matchValue: 64, active: true },
+            { verbose: "Stopped", matchValue: 80, active: true }
           ]
         },
       ]
