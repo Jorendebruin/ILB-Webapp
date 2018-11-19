@@ -1,11 +1,11 @@
-.sidebar {
+.c-sidebar {
   background: #ECEFF1;
   overflow-y: scroll;
 
   h1 {
     font-size: 2.25em;
     margin: 0.25em 0;
-    color: #9E9E9E;
+    color: map-get($text, light);
     font-weight: 400;
   }
 
@@ -36,25 +36,13 @@
         svg {
           margin: 0 1em 0 0.45em;
         }
-
-        .filter__color {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          margin: 0 0.75em 0 0;
-
-          &--purple { background: #673AB7; }
-          &--green { background: #4CAF50; }
-          &--orange { background: #FF9800; }
-          &--red { background: #F44336; }
-        }
       }
     }
   }
 }
 
 .dark {
-  .sidebar {
+  .c-sidebar {
     background: #212121;
     color: #bdbdbd;
 

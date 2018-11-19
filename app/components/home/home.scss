@@ -23,7 +23,7 @@
 
   }
 
-  .scrollable {
+  .c-scrollable {
     padding: 0;
 
     .title {
@@ -32,7 +32,7 @@
     }
   }
 
-  .sidebar {
+  .c-sidebar {
     .filter-group {
       h2 {
         display: flex;
@@ -47,11 +47,11 @@
           margin: 0.25em 0 0 1em;
           font-size: 0.5em;
           line-height: 1em;
-          color: #9e9e9e;
+          color: map-get($text, light);
           display: none;
 
           &:hover {
-            color: black;
+            color: map-get($text, base);
             cursor: pointer;
           }
         }
@@ -64,7 +64,17 @@
           .filter__checkbox {
             display: flex;
             align-items: center;
+          }
+          .filter__color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 0 0.75em 0 0;
 
+            &--purple { background: map-get($colors, purple); }
+            &--green { background: map-get($colors, green); }
+            &--orange { background: map-get($colors, orange); }
+            &--red { background: map-get($colors, red); }
           }
         }
       }
@@ -84,19 +94,19 @@
         background: #424242;
       }
     }
-    .scrollable {
+    .c-scrollable {
       .title {
         color: #bdbdbd;
       }
     }
-    .sidebar {
+    .c-sidebar {
       .filter-group {
         h2 {
           .filter-group__sort {
             color: #bdbdbd;
 
             &:hover {
-              color: #F44336;
+              color: map-get($colors, red);
             }
           }
         }
