@@ -1,5 +1,8 @@
 import React from 'react';
 
+import AWS from 'aws-sdk/global';
+import AWSMqtt from 'aws-mqtt';
+
 import axios from 'axios';
 
 import {
@@ -17,6 +20,10 @@ import Instance from '../instance/instance';
 export default class Home extends React.Component {
   constructor() {
     super();
+    AWS.config.region = 'eu-west-1' // your region
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
+    });
     this.state = {
       instances: [],
       sortBy: null,
@@ -67,6 +74,18 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
+    const client = AWSMqtt.connect({
+      WebSocket: window.WebSocket,
+      region: AWS.config.region,
+      credentials: AWS.config.credentials,
+      endpoint: "av0upm8irjpyk-ats.iot.eu-west-1.amazonaws.com",
+      clientId: 'mqtt-client-'+ (Math.floor((Math.random() * 100000) + 1))
+    });
+
+    client.on('connect', (e) => {
+      client.subscribe('/ilb');
+      console.log(e);
+    });
       var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
       axios.get(gateway_url + 'populate/', {
         headers: { 'Content-Type': 'application/json' }

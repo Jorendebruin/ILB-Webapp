@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-mqtt": "^0.2.2",
+    "aws-sdk": "^2.358.0",
     "axios": "^0.18.0",
     "flux": "^2.1.1",
     "react": "^0.14.7",
