@@ -45,9 +45,9 @@ gulp.task('sass', () => {
 });
 
 gulp.task('watch', () => {
-  gulp.watch(config.paths.html, ['html']);
-  gulp.watch(config.paths.js, ['js']);
-  gulp.watch(config.paths.sass, ['sass']);
+  gulp.watch(config.paths.html, gulp.parallel('html'));
+  gulp.watch(config.paths.js, gulp.parallel('js'));
+  gulp.watch(config.paths.sass, gulp.parallel('sass'));
 });
 
 gulp.task('connect', () => {
@@ -58,11 +58,11 @@ gulp.task('connect', () => {
   });
 });
 
-gulp.task('open', ['connect'], () => {
+gulp.task('open', gulp.parallel('connect', () => {
   gulp.src(config.paths.dist)
     .pipe(open({uri: config.uri}));
-});
+}));
 
-gulp.task('build', ['html', 'js', 'sass']);
+gulp.task('build', gulp.parallel('html', 'js', 'sass'));
 
-gulp.task('default', ['build', 'watch', 'open']);
+gulp.task('default', gulp.parallel('build', 'watch', 'open'));

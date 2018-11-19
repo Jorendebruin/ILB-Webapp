@@ -22,10 +22,10 @@
     "babel-preset-react": "^6.5.0",
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-concat": "^2.6.0",
-    "gulp-connect": "^2.3.1",
-    "gulp-open": "^1.0.0",
+    "gulp-connect": "^5.6.1",
+    "gulp-open": "^3.0.1",
     "gulp-sass": "^3.1.0",
     "gulp-watch": "^4.3.5",
     "vinyl-source-stream": "^1.1.0"
