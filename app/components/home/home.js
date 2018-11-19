@@ -74,6 +74,17 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
+    var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
+    axios.get(gateway_url + 'populate/', {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => {
+      this.setState({ instances: response.data });
+    })
+    .catch(error => {
+      console.log('error', error);
+    });
+
     const client = AWSMqtt.connect({
       WebSocket: window.WebSocket,
       region: AWS.config.region,
@@ -86,16 +97,6 @@ export default class Home extends React.Component {
       client.subscribe('/ilb');
       console.log(e);
     });
-      var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
-      axios.get(gateway_url + 'populate/', {
-        headers: { 'Content-Type': 'application/json' }
-      })
-      .then(response => {
-        this.setState({ instances: response.data });
-      })
-      .catch(error => {
-        console.log('error', error);
-      });
   }
 
   updateFilters() {
