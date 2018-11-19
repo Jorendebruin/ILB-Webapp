@@ -1,5 +1,7 @@
 import React from 'react';
 
+import axios from 'axios';
+
 import {
   MdLocationOn,
   MdCheckBox,
@@ -65,25 +67,24 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
-      var self = this;
-      fetch('https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/populate/',
-          {
-              headers: { 'Content-Type': 'application/json' }
-          })
-          .then(response => response.json())
-          .then(data => self.setState({ instances: data }));
+      var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
+      axios.get(gateway_url + 'populate/', {
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => {
+        this.setState({ instances: response.data });
+      })
+      .catch(error => {
+        console.log('error', error);
+      });
   }
 
   updateFilters() {
-    this.setState({
-      filters: this.state.filters
-    });
+    this.setState({ filters: this.state.filters });
   }
 
   updateSearchFilter(event) {
-    this.setState({
-      searchFilter: event.target.value
-    });
+    this.setState({ searchFilter: event.target.value });
   }
 
   sortInstancesBy(group) {
@@ -96,7 +97,10 @@ export default class Home extends React.Component {
     var instances = this.state.instances
     // Filter the instances based on the filters
     .filter((instance) => {
-      var returnInstance = false;
+      var locationFilter = false;
+      var availabilityZoneFilter = false;
+      var environmentFilter = false;
+      var statusFilter = false;
 
       this.state.filters.map((filterGroup) => {
         filterGroup.items.filter((filter) => {
@@ -105,32 +109,33 @@ export default class Home extends React.Component {
         .map((filter) => {
           // location filter
           if(filterGroup.verbose.toLowerCase() == 'locatie') {
-            if(instance.location.location.toLowerCase() == filter.matchValue.toLowerCase()) {
-              returnInstance = true;
+            if(instance.location.branch.toLowerCase() == filter.matchValue.toLowerCase()) {
+              locationFilter = true;
             }
           }
           // region filter
           if(filterGroup.verbose.toLowerCase() == 'availability zone') {
             if(instance.location.availabilityZone.toLowerCase() == filter.matchValue.toLowerCase()) {
-              returnInstance = true;
+              availabilityZoneFilter = true;
             }
           }
           // Environment filter
           if(filterGroup.verbose.toLowerCase() == 'omgeving') {
             if(instance.location.environment == filter.matchValue) {
-              returnInstance = true;
+              environmentFilter = true;
             }
           }
           // Status filter
           if(filterGroup.verbose.toLowerCase() == 'status') {
             if(instance.instance.state == filter.matchValue) {
-              returnInstance = true;
+              statusFilter = true;
             }
           }
         });
       });
 
-      if(returnInstance) return instance;
+      if(locationFilter && availabilityZoneFilter && environmentFilter && statusFilter)
+        return instance;
     })
     // Filter the instances based on the search field
     .filter((instance) => {
@@ -143,7 +148,7 @@ export default class Home extends React.Component {
       var searchString = this.state.searchFilter.toLowerCase().trim();
 
       // Check on location
-      if(instance.location.location.toLowerCase().includes(searchString)) {
+      if(instance.location.branch.toLowerCase().includes(searchString)) {
         returnInstance = true;
       }
       // Check on region
@@ -170,8 +175,8 @@ export default class Home extends React.Component {
 
       // sort by location
       if(this.state.sortBy.toLowerCase() == 'locatie') {
-        aValue = a.location.location;
-        bValue = b.location.location;
+        aValue = a.location.branch;
+        bValue = b.location.branch;
       }
 
       // sort by region
@@ -195,17 +200,18 @@ export default class Home extends React.Component {
       if(aValue < bValue) return -1;
       if(aValue > bValue) return 1;
       return 0;
-    })
+    });
+
     // Put all the instances we are left with in some HTML
-    .map((instance) => {
-      return <div className="col-xs-3">
-        <Instance instance={instance} key={instance.metadata.instanceId}></Instance>
+    var htmlFormattedInstances = instances.map((instance) => {
+      return <div className="col-xs-12 col-md-6 col-lg-3" key={instance.metadata.instanceId}>
+        <Instance instance={instance}></Instance>
       </div>;
     });
 
     // Generate the filters
     var filters = this.state.filters.map((filterGroup) => {
-      return <section className="filter-group">
+      return <section key={filterGroup.verbose} className="filter-group">
         <h2>
           { filterGroup.icon == 'MdLocationOn' ? <MdLocationOn/> : null }
           { filterGroup.icon == 'MdGroupWork' ? <MdGroupWork/> : null }
@@ -213,13 +219,40 @@ export default class Home extends React.Component {
           { filterGroup.icon == 'MdExplore' ? <MdExplore/> : null }
           { filterGroup.verbose }
           <div className="filter-group__sort" onClick={() => { this.sortInstancesBy(filterGroup.verbose); }}>
-            Sorteer op
+            Sorteer
           </div>
         </h2>
         <ul className="filters">
           {
             filterGroup.items.map((filter) => {
-              return <li className="filter" onClick={() => { filter.active = !filter.active; this.updateFilters(); } }>
+              var amountLeft = 0;
+              switch(filterGroup.verbose.toLowerCase()) {
+                case 'locatie':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return (instance.location.branch.toLowerCase()) == filter.matchValue;
+                  }).length;
+                  break;
+                case 'availability zone':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return (instance.location.availabilityZone.toLowerCase()) == filter.matchValue;
+                  }).length;
+                  break;
+                case 'omgeving':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return instance.location.environment == filter.matchValue;
+                  }).length;
+                  break;
+                case 'status':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return instance.instance.state == filter.matchValue;
+                  }).length;
+                  break;
+              }
+              return <li key={filter.verbose} className="filter" onClick={() => { filter.active = !filter.active; this.updateFilters(); } }>
                 <div className="filter__checkbox">
                   { filter.active ? <MdCheckBox /> : <MdCheckBoxOutlineBlank /> }
                 </div>
@@ -227,6 +260,9 @@ export default class Home extends React.Component {
                 <div>
                   { filter.verbose }
                 </div>
+                <span className="filter__amount-left">
+                  ({ amountLeft })
+                </span>
               </li>
             })
           }
@@ -236,7 +272,7 @@ export default class Home extends React.Component {
 
     return (
       <div className="homePage row">
-        <section className="col-xs-9 scrollable">
+        <section className="col-xs-10 scrollable">
           <section className="row">
             <div className="col-xs-12">
               <div className="search">
@@ -251,10 +287,10 @@ export default class Home extends React.Component {
             </div>
           </section>
           <section className="row scroll-overflow">
-            { instances }
+            { htmlFormattedInstances }
           </section>
         </section>
-        <aside className="sidebar col-xs-3">
+        <aside className="sidebar col-xs-2">
           <h1>Filters</h1>
           { filters }
         </aside>
