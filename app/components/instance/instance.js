@@ -11,7 +11,8 @@ import {
   MdPlayArrow,
   MdPause,
   MdStop,
-  MdGroupWork
+  MdGroupWork,
+  MdNotifications
 } from 'react-icons/md';
 
 export default class Home extends React.Component  {
@@ -107,6 +108,10 @@ export default class Home extends React.Component  {
             {this.state.instance.location.availabilityZone}
           </li>
           <li className={instanceState}>
+          <li className="col-xs-6">
+            <MdNotifications />
+            [alarm status]
+          </li>
             <MdExplore />
             {this.state.instance.instance.state == 0 ? 'pending' : null}
             {this.state.instance.instance.state == 16 ? 'running' : null}
