@@ -3,7 +3,7 @@ import React from 'react';
 import axios from 'axios';
 
 import {
-  MdLocationOn,
+  MdPlace,
   MdWatchLater,
   MdSync,
   MdHealing,
@@ -99,7 +99,7 @@ export default class Home extends React.Component  {
 
         <ul>
           <li>
-            <MdLocationOn />
+            <MdPlace />
             {this.state.instance.location.branch}
           </li>
           <li>
