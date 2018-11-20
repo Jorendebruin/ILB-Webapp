@@ -5,12 +5,11 @@ import axios from 'axios';
 import {
   MdLocationOn,
   MdWatchLater,
-  MdCloud,
+  MdSync,
   MdHealing,
   MdExplore,
   MdPlayArrow,
   MdPause,
-  MdUpdate,
   MdStop,
   MdGroupWork
 } from 'react-icons/md';
@@ -128,11 +127,11 @@ export default class Home extends React.Component  {
         </ul>
 
         <button disabled={buttonDisabled} onClick={() => this.toggleInstanceState() }>
-          {this.state.instance.instance.state == 0 ? <MdUpdate /> : null}
+          {this.state.instance.instance.state == 0 ? <MdSync className="loading" /> : null}
           {this.state.instance.instance.state == 16 ? <MdPause /> : null}
-          {this.state.instance.instance.state == 32 ? <MdUpdate /> : null}
+          {this.state.instance.instance.state == 32 ? <MdSync className="loading" /> : null}
           {this.state.instance.instance.state == 48 ? <MdStop /> : null}
-          {this.state.instance.instance.state == 64 ? <MdUpdate /> : null}
+          {this.state.instance.instance.state == 64 ? <MdSync className="loading" /> : null}
           {this.state.instance.instance.state == 80 ? <MdPlayArrow /> : null}
 
           {this.state.instance.instance.state == 0 ? 'Wating for response' : null}
