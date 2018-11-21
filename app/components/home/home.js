@@ -14,10 +14,13 @@ import {
 
 import Instance from '../instance/instance';
 
+import EmptyState from '../empty-state/empty-state';
+
 export default class Home extends React.Component {
   constructor() {
     super();
     this.state = {
+      fetchedInstances: false,
       instances: [],
       sortBy: null,
       searchFilter: null,
@@ -72,7 +75,7 @@ export default class Home extends React.Component {
         headers: { 'Content-Type': 'application/json' }
       })
       .then(response => {
-        this.setState({ instances: response.data });
+        this.setState({ instances: response.data, fetchedInstances: true });
       })
       .catch(error => {
         console.log('error', error);
@@ -204,7 +207,7 @@ export default class Home extends React.Component {
 
     // Put all the instances we are left with in some HTML
     var htmlFormattedInstances = instances.map((instance) => {
-      return <div className="col-xs-12 col-md-6 col-lg-3" key={instance.metadata.instanceId}>
+      return <div className="col-xs-12 col-md-4 col-lg-3 col-xl-2" key={instance.metadata.instanceId}>
         <Instance instance={instance}></Instance>
       </div>;
     });
@@ -287,6 +290,8 @@ export default class Home extends React.Component {
             </div>
           </section>
           <section className="row scroll-overflow">
+            { !this.state.fetchedInstances ? <EmptyState title="Loading" subtitle="Getting instances from AWS"></EmptyState> : null }
+            { this.state.fetchedInstances && htmlFormattedInstances.length == 0 ? <EmptyState title="Much empty" subtitle="No instances found with current filters"></EmptyState> : null }
             { htmlFormattedInstances }
           </section>
         </section>
