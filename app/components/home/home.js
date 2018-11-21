@@ -17,6 +17,8 @@ import {
 
 import Instance from '../instance/instance';
 
+import EmptyState from '../empty-state/empty-state';
+
 export default class Home extends React.Component {
   constructor() {
     super();
@@ -25,6 +27,7 @@ export default class Home extends React.Component {
       IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
     });
     this.state = {
+      fetchedInstances: false,
       instances: [],
       sortBy: null,
       searchFilter: null,
@@ -224,7 +227,7 @@ export default class Home extends React.Component {
 
     // Put all the instances we are left with in some HTML
     var htmlFormattedInstances = instances.map((instance) => {
-      return <div className="col-xs-12 col-md-6 col-lg-3" key={instance.metadata.instanceId}>
+      return <div className="col-xs-12 col-md-4 col-lg-3 col-xl-2" key={instance.metadata.instanceId}>
         <Instance instance={instance}></Instance>
       </div>;
     });
@@ -292,7 +295,7 @@ export default class Home extends React.Component {
 
     return (
       <div className="homePage row">
-        <section className="col-xs-10 scrollable">
+        <section className="col-xs-9 c-scrollable">
           <section className="row">
             <div className="col-xs-12">
               <div className="search">
@@ -307,10 +310,12 @@ export default class Home extends React.Component {
             </div>
           </section>
           <section className="row scroll-overflow">
+            { !this.state.fetchedInstances ? <EmptyState title="Loading" subtitle="Getting instances from AWS"></EmptyState> : null }
+            { this.state.fetchedInstances && htmlFormattedInstances.length == 0 ? <EmptyState title="Much empty" subtitle="No instances found with current filters"></EmptyState> : null }
             { htmlFormattedInstances }
           </section>
         </section>
-        <aside className="sidebar col-xs-2">
+        <aside className="c-sidebar col-xs-3">
           <h1>Filters</h1>
           { filters }
         </aside>
