@@ -1,9 +1,0 @@
-* {
-  color: map-get($text, base);
-}
-
-.dark {
-  * {
-    color: map-get($text, lighter);
-  }
-}

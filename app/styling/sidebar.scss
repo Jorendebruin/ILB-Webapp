@@ -1,4 +1,4 @@
-.sidebar {
+.c-sidebar {
   background: #ECEFF1;
   overflow-y: scroll;
 
@@ -10,7 +10,7 @@
   }
 
   > section {
-    margin-top: 2em;
+    margin-top: 1.75em;
 
     h2 {
       display: flex;
@@ -32,7 +32,7 @@
         list-style: none;
         display: flex;
         align-items: center;
-        margin: 0.75em 0;
+        margin: 0.5em 0;
 
         svg {
           margin: 0 0.8em 0 0.3em;

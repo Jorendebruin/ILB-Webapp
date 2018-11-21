@@ -275,7 +275,7 @@ export default class Home extends React.Component {
 
     return (
       <div className="homePage row">
-        <section className="col-xs-10 scrollable">
+        <section className="col-xs-9 c-scrollable">
           <section className="row">
             <div className="col-xs-12">
               <div className="search">
@@ -295,7 +295,7 @@ export default class Home extends React.Component {
             { htmlFormattedInstances }
           </section>
         </section>
-        <aside className="sidebar col-xs-2">
+        <aside className="c-sidebar col-xs-3">
           <h1>Filters</h1>
           { filters }
         </aside>
