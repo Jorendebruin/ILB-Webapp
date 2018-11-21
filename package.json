@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "acorn": "^6.0.4",
     "axios": "^0.18.0",
     "flux": "^2.1.1",
     "react": "^0.14.7",
