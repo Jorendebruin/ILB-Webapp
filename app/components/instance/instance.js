@@ -29,6 +29,27 @@ export default class Home extends React.Component  {
     });
   }
 
+  componentDidMount() {		
+	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/";
+	var instanceId = this.state.instance.metadata.instanceId;
+		
+	axios.get(Alias_gateway_url,
+	  {
+		  headers: { 'Content-Type': 'application/json' },
+		  params: { InstanceId: instanceId }
+	  })
+	.then((response) => {
+		if (typeof response.data.Item != 'undefined')
+		{
+			this.state.instance.metadata.verbose = response.data.Item.Instance_Alias.S;
+			this.updateInstance();
+		}
+	})
+	.catch((error) => {
+	  console.log('Alias get error: ', error);
+	});
+  }
+  
   toggleInstanceState() {
     const gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
     var state = this.state.instance.instance.state;
@@ -47,7 +68,7 @@ export default class Home extends React.Component  {
     .then((response) => {
       console.log('finished', response);
     })
-    .catch((err) => {
+    .catch((error) => {
       console.log('error', error);
     });
   }
