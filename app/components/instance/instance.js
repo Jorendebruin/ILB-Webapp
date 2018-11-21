@@ -30,7 +30,7 @@ export default class Home extends React.Component  {
   }
 
   componentDidMount() {		
-	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/"; //?InstanceId= 
+	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/";
 	var instanceId = this.state.instance.metadata.instanceId;
 		
 	axios.get(Alias_gateway_url,
@@ -39,15 +39,11 @@ export default class Home extends React.Component  {
 		  params: { InstanceId: instanceId }
 	  })
 	.then((response) => {
-		var alias = this.state.instance.metadata.name;
-
 		if (typeof response.data.Item != 'undefined')
 		{
-			alias = response.data.Item.Instance_Alias.S;
+			this.state.instance.metadata.verbose = response.data.Item.Instance_Alias.S;
+			this.updateInstance();
 		}
-	  	  
-		this.state.instance.metadata.verbose = alias;
-		this.updateInstance();
 	})
 	.catch((error) => {
 	  console.log('Alias get error: ', error);
