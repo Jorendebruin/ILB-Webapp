@@ -29,6 +29,39 @@ export default class Home extends React.Component  {
     });
   }
 
+  componentDidMount() {		
+	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/?InstanceId=";
+	var instanceId =  this.state.instance.metadata.instanceId;
+	
+	//'i-07f63f9ce4f6e8211'
+	
+	axios.get(Alias_gateway_url + instanceId,
+	  {
+		  headers: { 'Content-Type': 'application/json' }
+	  })
+	.then((response) => {
+	  console.log('ALIAS finished');
+	  
+	  var alias = "Temp alias hc";
+	  console.log('var alias = ' + alias)
+	  console.log('this.verbose' + this.state.instance.metadata.verbose);
+	  
+	  this.state.instance.metadata.verbose = alias;
+	  console.log('2e this.verbose ' +this.state.instance.metadata.verbose);
+
+	  
+	  // if ( response.data.Item.Instance_Alias )
+	  // {
+		  // console.log('ALIAS = ' + response.data.Item.Instance_Alias);
+		// this.state.instance.metadata.verbose = response.data.Item.Instance_Alias;
+	  // }
+	  
+	})
+	.catch((err) => {
+	  console.log('ALIAS error', err);
+	});
+  }
+  
   toggleInstanceState() {
     const gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
     var state = this.state.instance.instance.state;
