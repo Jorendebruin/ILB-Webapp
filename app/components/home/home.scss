@@ -36,6 +36,7 @@
     .filter-group {
       h2 {
         display: flex;
+        align-items: center;
 
         &:hover {
           .filter-group__sort {
@@ -44,7 +45,7 @@
         }
 
         .filter-group__sort {
-          margin: 0.25em 0 0 1em;
+          margin: 0.45em 0 0 0.75em;
           font-size: 0.5em;
           line-height: 1em;
           color: map-get($text, light);
@@ -75,6 +76,10 @@
             &--green { background: map-get($colors, green); }
             &--orange { background: map-get($colors, orange); }
             &--red { background: map-get($colors, red); }
+          }
+          .filter__amount-left {
+            font-size: 0.7em;
+            padding: 0 0.5em;
           }
         }
       }
