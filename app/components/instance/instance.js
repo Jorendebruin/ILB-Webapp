@@ -3,16 +3,16 @@ import React from 'react';
 import axios from 'axios';
 
 import {
-  MdLocationOn,
+  MdPlace,
   MdWatchLater,
-  MdCloud,
+  MdSync,
   MdHealing,
   MdExplore,
   MdPlayArrow,
   MdPause,
-  MdUpdate,
   MdStop,
-  MdGroupWork
+  MdGroupWork,
+  MdNotifications
 } from 'react-icons/md';
 
 export default class Home extends React.Component  {
@@ -98,16 +98,25 @@ export default class Home extends React.Component  {
           <span>{this.state.instance.metadata.name}</span>
         </header>
 
-        <ul>
-          <li>
-            <MdLocationOn />
+        <ul className="row">
+          <li className="col-xs-6">
+            <MdPlace />
             {this.state.instance.location.branch}
           </li>
-          <li>
+          <li className="col-xs-6">
             <MdGroupWork />
             {this.state.instance.location.availabilityZone}
           </li>
-          <li className={instanceState}>
+          <li className={`col-xs-6 ${this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'state--warning' : 'state--ok'}`}>
+            <MdHealing />
+            {this.state.instance.status.health.passed}/{this.state.instance.status.health.amount}
+            &nbsp;checks
+          </li>
+          <li className="col-xs-6">
+            <MdNotifications />
+            [alarm status]
+          </li>
+          <li className={`col-xs-6 ${instanceState}`}>
             <MdExplore />
             {this.state.instance.instance.state == 0 ? 'pending' : null}
             {this.state.instance.instance.state == 16 ? 'running' : null}
@@ -116,23 +125,18 @@ export default class Home extends React.Component  {
             {this.state.instance.instance.state == 64 ? 'stopping' : null}
             {this.state.instance.instance.state == 80 ? 'stopped' : null}
           </li>
-          <li className={this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'state--warning' : 'state--ok'}>
-            <MdHealing />
-            {this.state.instance.status.health.passed}/{this.state.instance.status.health.amount}
-            &nbsp;checks
-          </li>
-          <li>
+          <li className="col-xs-6">
             <MdWatchLater />
             { this.state.instance.instance.state == 16 ? runTime.hours+'h '+runTime.minutes+'m' : '-'}
           </li>
         </ul>
 
         <button disabled={buttonDisabled} onClick={() => this.toggleInstanceState() }>
-          {this.state.instance.instance.state == 0 ? <MdUpdate /> : null}
+          {this.state.instance.instance.state == 0 ? <MdSync className="loading" /> : null}
           {this.state.instance.instance.state == 16 ? <MdPause /> : null}
-          {this.state.instance.instance.state == 32 ? <MdUpdate /> : null}
+          {this.state.instance.instance.state == 32 ? <MdSync className="loading" /> : null}
           {this.state.instance.instance.state == 48 ? <MdStop /> : null}
-          {this.state.instance.instance.state == 64 ? <MdUpdate /> : null}
+          {this.state.instance.instance.state == 64 ? <MdSync className="loading" /> : null}
           {this.state.instance.instance.state == 80 ? <MdPlayArrow /> : null}
 
           {this.state.instance.instance.state == 0 ? 'Wating for response' : null}
