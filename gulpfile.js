@@ -15,7 +15,7 @@ var config = {
     html: 'app/**/*.html',
     js: 'app/**/*.js',
     main: 'app/main.js',
-    sass: 'app/**/*.scss',
+    sass: 'app/style.scss',
     dist: 'dist'
   }
 };
@@ -47,7 +47,7 @@ gulp.task('sass', () => {
 gulp.task('watch', () => {
   gulp.watch(config.paths.html, ['html']);
   gulp.watch(config.paths.js, ['js']);
-  gulp.watch(config.paths.sass, ['sass']);
+  gulp.watch('app/**/*.scss', ['sass']);
 });
 
 gulp.task('connect', () => {

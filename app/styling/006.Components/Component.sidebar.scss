@@ -1,0 +1,53 @@
+.c-sidebar {
+  background: #ECEFF1;
+  overflow-y: scroll;
+
+  h1 {
+    font-size: 2.25em;
+    margin: 0.25em 0;
+    color: map-get($text, light);
+    font-weight: 400;
+  }
+
+  > section {
+    margin-top: 2em;
+
+    h2 {
+      display: flex;
+      align-items: center;
+      font-weight: 400;
+      margin-bottom: 0;
+
+      svg {
+        font-size: 1.25em;
+        margin-right: 0.25em;
+      }
+    }
+
+    ul {
+      padding: 0;
+
+      li {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        margin: 0.75em 0;
+
+        svg {
+          margin: 0 1em 0 0.45em;
+        }
+      }
+    }
+  }
+}
+
+.dark {
+  .c-sidebar {
+    background: #212121;
+    color: #bdbdbd;
+
+    h1 {
+      color: #616161;
+    }
+  }
+}
