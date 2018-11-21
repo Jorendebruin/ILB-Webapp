@@ -23,6 +23,40 @@ export default class Home extends React.Component  {
     }
   }
 
+  componentDidMount() {
+    this.poll();
+   var pollTimer = setInterval(() => {
+      this.poll();
+    }, 20000);
+    this.setState({polltimer: pollTimer})
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.state.pollTimer);
+  }
+  poll() {
+    var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
+    var id = this.state.instance.metadata.instanceId;
+    axios.get(gateway_url + 'pollstatus/?ID=' + id, {
+      headers: { 'Content-Type': 'application/json' }
+    }).then(res => 
+    {
+      console.log(res.data)
+      if(!res.data.errorMessage)
+      {
+      this.state.instance.status.health.passed = res.data.h;
+      this.state.instance.instance.state = res.data.status;
+      }
+      else 
+      { this.state.instance.status.health.passed = 0;
+        this.state.instance.instance.state = 80; 
+      }
+      this.state.instance.status.health.amount = 2;
+      //this.state.instance.instance.state = 
+      this.updateInstance();
+    });
+  }
+
   updateInstance() {
     this.setState({
       instance: this.state.instance
@@ -46,10 +80,11 @@ export default class Home extends React.Component  {
     })
     .then((response) => {
       console.log('finished', response);
+      clearInterval(this.state.pollTimer)
     })
     .catch((err) => {
-      console.log('error', error);
-    });
+      console.log('error', err);
+    })
   }
 
   render() {

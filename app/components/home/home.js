@@ -70,16 +70,43 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
+      var self = this;
       var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
+      // this.timer = setInterval(() =>
       axios.get(gateway_url + 'populate/', {
         headers: { 'Content-Type': 'application/json' }
       })
       .then(response => {
-        this.setState({ instances: response.data, fetchedInstances: true });
+        console.log(response.data);
+        self.setState({ instances: response.data, fetchedInstances: true });
+        // for (let i = 0; i < response.data.length; i++)
+        // {
+        //   var id = response.data[i].metadata.instanceId;
+        //   axios.get(gateway_url + 'pollstatus/?ID=' + id, {
+        //     headers: { 'Content-Type': 'application/json' }
+        //   }).then(res => 
+        //   {
+        //     console.log(res.data)
+        //     console.log(response.data[i])
+        //     if( res.data.h == 2 | res.data.h == 1)
+        //     {
+        //     self.state.instances[i].status.health.passed = res.data.h;
+        //     }
+        //     else 
+        //     { self.state.instances[i].status.health.passed = 0;}
+        //     self.state.instances[i].status.health.amount = 2;
+        //     self.setState({ instances: self.state.instances });
+        //   });
+        // }
       })
       .catch(error => {
         console.log('error', error);
       });
+      // , 15000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   updateFilters() {
