@@ -30,12 +30,13 @@ export default class Home extends React.Component  {
   }
 
   componentDidMount() {		
-	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/?InstanceId=";
+	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/"; //?InstanceId= 
 	var instanceId = this.state.instance.metadata.instanceId;
 		
-	axios.get(Alias_gateway_url + instanceId,
+	axios.get(Alias_gateway_url,
 	  {
-		  headers: { 'Content-Type': 'application/json' }
+		  headers: { 'Content-Type': 'application/json' },
+		  params: { InstanceId: instanceId }
 	  })
 	.then((response) => {
 		var alias = this.state.instance.metadata.name;
