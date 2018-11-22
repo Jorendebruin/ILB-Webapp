@@ -36,7 +36,7 @@ export default class Instance extends React.Component  {
     // You can only toggle the state when it's either running (16) or stopped (80)
     if(state != 16 && state != 80) return;
 
-    this.state.instance.instance.state = state == 16 ? 32 : 0;
+    this.state.instance.instance.state = state == 16 ? 64 : 0;
     this.updateInstance();
 
     axios.get(gateway_url + (state == 16 ? 'stop' : 'start'), {
@@ -45,7 +45,6 @@ export default class Instance extends React.Component  {
       }
     })
     .then((response) => {
-      console.log('finished', response);
     })
     .catch((err) => {
       console.log('error', error);
