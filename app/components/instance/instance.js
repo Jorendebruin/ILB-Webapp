@@ -34,9 +34,25 @@ export default class Home extends React.Component  {
   componentWillUnmount(){
     clearInterval(this.state.pollTimer);
   }
+
   poll() {
     var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
     var id = this.state.instance.metadata.instanceId;
+    
+    //Updating time and state of instance
+    axios.get(gateway_url + 'describe/?ID=' + id, {
+      headers: { 'Content-Type': 'application/json' }
+    }).then(result =>
+      {
+        this.state.instance.instance.state = result.data.instance.state;
+        this.state.instance.instance.startuptime = result.data.instance.startuptime;
+        this.updateInstance();
+      });
+    
+    // If instance is not running(16), there's no need to perform health-checks
+    if (this.state.instance.instance.state != 16) return;
+
+    //Updating of Health Checks of instance
     axios.get(gateway_url + 'pollstatus/?ID=' + id, {
       headers: { 'Content-Type': 'application/json' }
     }).then(res => 
@@ -45,14 +61,11 @@ export default class Home extends React.Component  {
       if(!res.data.errorMessage)
       {
       this.state.instance.status.health.passed = res.data.h;
-      this.state.instance.instance.state = res.data.status;
       }
       else 
       { this.state.instance.status.health.passed = 0;
-        this.state.instance.instance.state = 80; 
       }
       this.state.instance.status.health.amount = 2;
-      //this.state.instance.instance.state = 
       this.updateInstance();
     });
   }
