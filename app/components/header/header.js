@@ -15,8 +15,9 @@ export default class MainHeader extends React.Component {
     super();
 
     this.state = {
-      nightModus: false
+      nightModus: (JSON.parse(localStorage.getItem('nightModus')) == true ? true : false)
     }
+    this.toggleNightModus(!JSON.parse(localStorage.getItem('nightModus')));
   }
 
   toggleNightModus(state) {
@@ -27,7 +28,11 @@ export default class MainHeader extends React.Component {
     // Toggle a class on the body so we can add styling
     var elem = document.getElementsByTagName('body')[0];
     !state ? elem.classList.add('dark') : elem.classList.remove('dark');
+
+    // Update the localStorage
+    localStorage.setItem('nightModus', JSON.stringify(!state));
   }
+
   render() {
     return (
       <header className="main-header row between-xs">

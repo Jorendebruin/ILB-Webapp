@@ -1,20 +1,57 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
-// General styling
-@import "styling/_variables/main.scss";
-@import "styling/_mixins/main.scss";
-@import "styling/grid/grid";
-@import "styling/grid/visibility"; // Visibility last for precedence
+/*-------------------------
+    001 Settings
+-------------------------*/
+@import './styling/001.Settings/_grid.scss';
+@import './styling/001.Settings/_colors.scss';
 
-body {
-  font-family: 'Roboto', sans-serif;
-  margin: 0;
-  background: #FAFAFA;
+/*-------------------------
+  002 Tools
+-------------------------*/
+// Mixins
+@import "./styling/002.Tools/Mixins/_grid";;
+@import "./styling/002.Tools/Mixins/_visibility";
 
-  &.dark {
-    background: #303030;
-  }
-}
+// Grid
+@import "./styling/002.Tools/Grid/_grid.scss";
+@import "./styling/002.Tools/Grid/_visibility.scss";
+
+/*-------------------------
+  003 Generic
+-------------------------*/
+@import "./styling/003.Generic/Generic.all.scss";
+
+/*-------------------------
+  004 Elements
+-------------------------*/
+@import "./styling/004.Elements/Element.body.scss";
+
+/*-------------------------
+  005 Objects
+-------------------------*/
+
+/*-------------------------
+  006 Components
+-------------------------*/
+@import "./styling/006.Components/Component.sidebar.scss";
+@import "./styling/006.Components/Component.scrollable.scss";
+
+/*-------------------------
+  007 Utilities
+-------------------------*/
+
+/*-------------------------
+  008 Trumps
+-------------------------*/
+
+/*-------------------------
+  Component level styling
+-------------------------*/
+@import "./components/home/home.scss";
+@import "./components/header/header.scss";
+@import "./components/instance/instance.scss";
+@import "./components/empty-state/empty-state.scss";
 
 #app {
   .wrapper {

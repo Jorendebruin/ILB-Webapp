@@ -1,5 +1,7 @@
 import React from 'react';
 
+import axios from 'axios';
+
 import {
   MdLocationOn,
   MdCheckBox,
@@ -12,10 +14,13 @@ import {
 
 import Instance from '../instance/instance';
 
+import EmptyState from '../empty-state/empty-state';
+
 export default class Home extends React.Component {
   constructor() {
     super();
     this.state = {
+      fetchedInstances: false,
       instances: [],
       sortBy: null,
       searchFilter: null,
@@ -26,12 +31,12 @@ export default class Home extends React.Component {
           items: [
             { verbose: "Aalsmeer", matchValue: "aalsmeer", active: true },
             { verbose: "Naaldwijk", matchValue: "naaldwijk", active: true },
-            { verbose: "Rijnswijk", matchValue: "rijnswijk", active: true },
-            { verbose: "Other", matchValue: "other", active: true }
+            { verbose: "Rijnsburg", matchValue: "rijnsburg", active: true },
+            { verbose: "Generic", matchValue: "generic", active: true }
           ]
         },
         {
-          verbose: "Regio",
+          verbose: "Availability zone",
           icon: 'MdGroupWork',
           items: [
             { verbose: "Eu-west-1a", matchValue: "eu-west-1a", active: true },
@@ -42,20 +47,22 @@ export default class Home extends React.Component {
           verbose: "Omgeving",
           icon: 'MdBlurCircular',
           items: [
-            { verbose: "Ontwikkeling (O)", matchValue: 1, active: true, colorCode: "purple" },
-            { verbose: "Test (T)", matchValue: 2, active: true, colorCode: "green" },
-            { verbose: "Acceptatie (A)", matchValue: 3, active: true, colorCode: "orange" },
-            { verbose: "Productie (P)", matchValue: 4, active: true, colorCode: "red" }
+            { verbose: "O - Ontwikkeling", matchValue: 1, active: true, colorCode: "purple" },
+            { verbose: "T - Test", matchValue: 2, active: true, colorCode: "green" },
+            { verbose: "A - Acceptatie", matchValue: 3, active: true, colorCode: "orange" },
+            { verbose: "P - Productie", matchValue: 4, active: true, colorCode: "red" }
           ]
         },
         {
           verbose: "Status",
           icon: 'MdExplore',
           items: [
-            { verbose: "Starting up", matchValue: 1, active: true },
-            { verbose: "Running", matchValue: 2, active: true },
-            { verbose: "Shutting down", matchValue: 3, active: true },
-            { verbose: "Stopped", matchValue: 4, active: true }
+            { verbose: "Pending", matchValue: 0, active: true },
+            { verbose: "Running", matchValue: 16, active: true },
+            { verbose: "Shutting-down", matchValue: 32, active: true },
+            { verbose: "Terminated", matchValue: 48, active: true },
+            { verbose: "Stopping", matchValue: 64, active: true },
+            { verbose: "Stopped", matchValue: 80, active: true }
           ]
         },
       ]
@@ -63,96 +70,24 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
-    var instances = [
-      {
-        metadata: {
-          name: 'rfh-jda-sql-prd-openstaging.rfh.private',
-          verbose: 'alx-oo-bt-001',
-          instanceId: 'i-7235cs2356as3456'
-        },
-        location: {
-          location: 'naaldwijk',
-          availabilityZone: 'eu-west-1a',
-          environment: 2,
-        },
-        instance: {
-          type: 't3.medium',
-          startuptime: new Date(),
-          state: 4
-        },
-        status: {
-          health: {
-            amount: 2,
-            passed: 2
-          },
-          alarm: 1
-        }
-      },
-      {
-        metadata: {
-          name: 'rfh-jda-sql-prd-openstaging.rfh.protected',
-          verbose: 'por-ex-ah-003',
-          instanceId: 'i-7235cs2356ae3456'
-        },
-        location: {
-          location: 'rijnswijk',
-          availabilityZone: 'eu-west-1b',
-          environment: 3,
-        },
-        instance: {
-          type: 't3.large',
-          startuptime: new Date(),
-          state: 4
-        },
-        status: {
-          health: {
-            amount: 2,
-            passed: 2
-          },
-          alarm: 1
-        }
-      },
-      {
-        metadata: {
-          name: 'rfh-jda-sql-prd-openstaging.rfh.public',
-          verbose: 'vtl-pl-bt-001',
-          instanceId: 'i-47535dsf647345kasdf'
-        },
-        location: {
-          location: 'aalsmeer',
-          availabilityZone: 'eu-west-1b',
-          environment: 1,
-        },
-        instance: {
-          type: 't3.large',
-          startuptime: new Date(),
-          state: 1
-        },
-        status: {
-          health: {
-            amount: 2,
-            passed: 1
-          },
-          alarm: 1
-        }
-      }
-    ];
-
-    this.setState({
-      instances: instances
-    });
+      var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
+      axios.get(gateway_url + 'populate/', {
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => {
+        this.setState({ instances: response.data, fetchedInstances: true });
+      })
+      .catch(error => {
+        console.log('error', error);
+      });
   }
 
   updateFilters() {
-    this.setState({
-      filters: this.state.filters
-    });
+    this.setState({ filters: this.state.filters });
   }
 
   updateSearchFilter(event) {
-    this.setState({
-      searchFilter: event.target.value
-    });
+    this.setState({ searchFilter: event.target.value });
   }
 
   sortInstancesBy(group) {
@@ -165,7 +100,10 @@ export default class Home extends React.Component {
     var instances = this.state.instances
     // Filter the instances based on the filters
     .filter((instance) => {
-      var returnInstance = false;
+      var locationFilter = false;
+      var availabilityZoneFilter = false;
+      var environmentFilter = false;
+      var statusFilter = false;
 
       this.state.filters.map((filterGroup) => {
         filterGroup.items.filter((filter) => {
@@ -174,32 +112,33 @@ export default class Home extends React.Component {
         .map((filter) => {
           // location filter
           if(filterGroup.verbose.toLowerCase() == 'locatie') {
-            if(instance.location.location.toLowerCase() == filter.matchValue.toLowerCase()) {
-              returnInstance = true;
+            if(instance.location.branch.toLowerCase() == filter.matchValue.toLowerCase()) {
+              locationFilter = true;
             }
           }
           // region filter
-          if(filterGroup.verbose.toLowerCase() == 'regio') {
+          if(filterGroup.verbose.toLowerCase() == 'availability zone') {
             if(instance.location.availabilityZone.toLowerCase() == filter.matchValue.toLowerCase()) {
-              returnInstance = true;
+              availabilityZoneFilter = true;
             }
           }
           // Environment filter
           if(filterGroup.verbose.toLowerCase() == 'omgeving') {
             if(instance.location.environment == filter.matchValue) {
-              returnInstance = true;
+              environmentFilter = true;
             }
           }
           // Status filter
           if(filterGroup.verbose.toLowerCase() == 'status') {
             if(instance.instance.state == filter.matchValue) {
-              returnInstance = true;
+              statusFilter = true;
             }
           }
         });
       });
 
-      if(returnInstance) return instance;
+      if(locationFilter && availabilityZoneFilter && environmentFilter && statusFilter)
+        return instance;
     })
     // Filter the instances based on the search field
     .filter((instance) => {
@@ -208,20 +147,23 @@ export default class Home extends React.Component {
 
       var returnInstance = false;
 
+      // 'clean' the input
+      var searchString = this.state.searchFilter.toLowerCase().trim();
+
       // Check on location
-      if(instance.location.location.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+      if(instance.location.branch.toLowerCase().includes(searchString)) {
         returnInstance = true;
       }
       // Check on region
-      if(instance.location.availabilityZone.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+      if(instance.location.availabilityZone.toLowerCase().includes(searchString)) {
         returnInstance = true;
       }
       // Check on alias
-      if(instance.metadata.verbose.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+      if(instance.metadata.verbose.toLowerCase().includes(searchString)) {
         returnInstance = true;
       }
       // Check on name
-      if(instance.metadata.name.toLowerCase().includes(this.state.searchFilter.toLowerCase())) {
+      if(instance.metadata.name.toLowerCase().includes(searchString)) {
         returnInstance = true;
       }
 
@@ -236,8 +178,8 @@ export default class Home extends React.Component {
 
       // sort by location
       if(this.state.sortBy.toLowerCase() == 'locatie') {
-        aValue = a.location.location;
-        bValue = b.location.location;
+        aValue = a.location.branch;
+        bValue = b.location.branch;
       }
 
       // sort by region
@@ -261,17 +203,18 @@ export default class Home extends React.Component {
       if(aValue < bValue) return -1;
       if(aValue > bValue) return 1;
       return 0;
-    })
+    });
+
     // Put all the instances we are left with in some HTML
-    .map((instance) => {
-      return <div className="col-xs-3">
-        <Instance instance={instance} key={instance.metadata.instanceId}></Instance>
+    var htmlFormattedInstances = instances.map((instance) => {
+      return <div className="col-xs-12 col-md-4 col-lg-3 col-xl-2" key={instance.metadata.instanceId}>
+        <Instance instance={instance}></Instance>
       </div>;
     });
 
     // Generate the filters
     var filters = this.state.filters.map((filterGroup) => {
-      return <section className="filter-group">
+      return <section key={filterGroup.verbose} className="filter-group">
         <h2>
           { filterGroup.icon == 'MdLocationOn' ? <MdLocationOn/> : null }
           { filterGroup.icon == 'MdGroupWork' ? <MdGroupWork/> : null }
@@ -279,13 +222,40 @@ export default class Home extends React.Component {
           { filterGroup.icon == 'MdExplore' ? <MdExplore/> : null }
           { filterGroup.verbose }
           <div className="filter-group__sort" onClick={() => { this.sortInstancesBy(filterGroup.verbose); }}>
-            sort by
+            Sorteer
           </div>
         </h2>
         <ul className="filters">
           {
             filterGroup.items.map((filter) => {
-              return <li className="filter" onClick={() => { filter.active = !filter.active; this.updateFilters(); } }>
+              var amountLeft = 0;
+              switch(filterGroup.verbose.toLowerCase()) {
+                case 'locatie':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return (instance.location.branch.toLowerCase()) == filter.matchValue;
+                  }).length;
+                  break;
+                case 'availability zone':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return (instance.location.availabilityZone.toLowerCase()) == filter.matchValue;
+                  }).length;
+                  break;
+                case 'omgeving':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return instance.location.environment == filter.matchValue;
+                  }).length;
+                  break;
+                case 'status':
+                  amountLeft = instances.filter((instance) => {
+                    if(!filter.active) return;
+                    return instance.instance.state == filter.matchValue;
+                  }).length;
+                  break;
+              }
+              return <li key={filter.verbose} className="filter" onClick={() => { filter.active = !filter.active; this.updateFilters(); } }>
                 <div className="filter__checkbox">
                   { filter.active ? <MdCheckBox /> : <MdCheckBoxOutlineBlank /> }
                 </div>
@@ -293,6 +263,9 @@ export default class Home extends React.Component {
                 <div>
                   { filter.verbose }
                 </div>
+                <span className="filter__amount-left">
+                  ({ amountLeft })
+                </span>
               </li>
             })
           }
@@ -302,13 +275,13 @@ export default class Home extends React.Component {
 
     return (
       <div className="homePage row">
-        <section className="col-xs-9 scrollable">
+        <section className="col-xs-9 c-scrollable">
           <section className="row">
             <div className="col-xs-12">
               <div className="search">
                 <MdSearch />
                 <input
-                  placeholder="Zoeken op locatie, regio, alias, name"
+                  placeholder="Zoeken op locatie, availability zone, alias, name"
                   value={this.state.searchFilter}
                   onChange={this.updateSearchFilter.bind(this)}>
                 </input>
@@ -317,10 +290,12 @@ export default class Home extends React.Component {
             </div>
           </section>
           <section className="row scroll-overflow">
-            { instances }
+            { !this.state.fetchedInstances ? <EmptyState title="Loading" subtitle="Getting instances from AWS"></EmptyState> : null }
+            { this.state.fetchedInstances && htmlFormattedInstances.length == 0 ? <EmptyState title="Much empty" subtitle="No instances found with current filters"></EmptyState> : null }
+            { htmlFormattedInstances }
           </section>
         </section>
-        <aside className="sidebar col-xs-3">
+        <aside className="c-sidebar col-xs-3">
           <h1>Filters</h1>
           { filters }
         </aside>
