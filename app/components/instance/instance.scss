@@ -28,7 +28,7 @@
     h1 {
       margin: 0;
       padding: .75em 0 0 0;
-      font-size: 1.5em;
+      font-size: 1.25em;
       font-weight: 600;
     }
     span {
@@ -94,7 +94,7 @@
 
     &[disabled] {
       cursor: not-allowed;
-      color: map-get($text, lighter);
+      color: map-get($text, light);
     }
   }
 }
