@@ -91,6 +91,36 @@ export default class Instance extends React.Component  {
       minutes: timeDiff.getMinutes()
     };
 
+    var buttonIcon = <MdSync className="loading" />;
+    var buttonVerbose = 'Wating for response';
+    var instanceStateVerbose;
+    switch(this.state.instance.instance.state) {
+      case 0:
+        instanceStateVerbose = 'pending';
+        break;
+      case 16:
+        buttonIcon = <MdPause />;
+        buttonVerbose = 'Stop instance';
+        instanceStateVerbose = 'running';
+        break;
+      case 32:
+        instanceStateVerbose = 'shutting-down';
+        break;
+      case 48:
+        buttonIcon = <MdStop />;
+        buttonVerbose = "Instance is terminated";
+        instanceStateVerbose = 'terminated';
+        break;
+      case 64:
+        instanceStateVerbose = 'stopping';
+        break;
+      case 80:
+        buttonIcon = <MdPlayArrow />;
+        buttonVerbose = 'Start instance';
+        instanceStateVerbose = 'stopped';
+        break;
+    }
+
     return (
       <div className={ `c-instance ${environment}` }>
         <header>
@@ -118,12 +148,7 @@ export default class Instance extends React.Component  {
           </li>
           <li className={`col-xs-6 ${instanceState}`}>
             <MdExplore />
-            {this.state.instance.instance.state == 0 ? 'pending' : null}
-            {this.state.instance.instance.state == 16 ? 'running' : null}
-            {this.state.instance.instance.state == 32 ? 'shutting-down' : null}
-            {this.state.instance.instance.state == 48 ? 'terminated' : null}
-            {this.state.instance.instance.state == 64 ? 'stopping' : null}
-            {this.state.instance.instance.state == 80 ? 'stopped' : null}
+            {instanceStateVerbose}
           </li>
           <li className="col-xs-6">
             <MdWatchLater />
@@ -132,19 +157,7 @@ export default class Instance extends React.Component  {
         </ul>
 
         <button disabled={buttonDisabled} onClick={() => this.toggleInstanceState() }>
-          {this.state.instance.instance.state == 0 ? <MdSync className="loading" /> : null}
-          {this.state.instance.instance.state == 16 ? <MdPause /> : null}
-          {this.state.instance.instance.state == 32 ? <MdSync className="loading" /> : null}
-          {this.state.instance.instance.state == 48 ? <MdStop /> : null}
-          {this.state.instance.instance.state == 64 ? <MdSync className="loading" /> : null}
-          {this.state.instance.instance.state == 80 ? <MdPlayArrow /> : null}
-
-          {this.state.instance.instance.state == 0 ? 'Wating for response' : null}
-          {this.state.instance.instance.state == 16 ? 'Stop instance' : null}
-          {this.state.instance.instance.state == 32 ? 'Wating for response' : null}
-          {this.state.instance.instance.state == 48 ? 'Instance is terminated' : null}
-          {this.state.instance.instance.state == 64 ? 'Wating for response' : null}
-          {this.state.instance.instance.state == 80 ? 'Start instance' : null}
+          {buttonIcon} {buttonVerbose}
         </button>
       </div>
     )
