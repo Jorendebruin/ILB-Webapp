@@ -50,21 +50,21 @@ export default class Home extends React.Component {
                 <div className="regionBar">
                 </div>
                 <div className="dataOverview">
-                    <h1>Meta Data</h1>
+                    <h2>Meta Data</h2>
                     <p>Name:</p>
                     <p>Instance ID</p>
                     <br></br>
-                    <h1>Location</h1>
+                    <h2>Location</h2>
                     <p>Regio</p>
                     <p>Omgeving</p>
                     <p>Status</p>
                     <br></br>
-                    <h1>Instance</h1>
+                    <h2>Instance</h2>
                     <p>Instance type</p>
                     <p>Runtime</p>
                     <p>Availability zone</p>
                     <br></br>
-                    <h1>Status</h1>
+                    <h2>Status</h2>
                     <p>Health</p>
                     <p>Alarm</p>
                 </div>
