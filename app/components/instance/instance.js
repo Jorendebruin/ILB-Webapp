@@ -15,7 +15,7 @@ import {
   MdNotifications
 } from 'react-icons/md';
 
-export default class Home extends React.Component  {
+export default class Instance extends React.Component  {
   constructor(props) {
     super();
     this.state = {
