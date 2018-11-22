@@ -1,6 +1,14 @@
 import React from 'react';
 
+import AWS from 'aws-sdk/global';
+
 import axios from 'axios';
+
+import PahoMQTT from 'paho-mqtt'
+global.Paho = {
+  MQTT: PahoMQTT
+}
+import AWSwebsocket from '../../lib/websocket/awswebsocket';
 
 import {
   MdLocationOn,
@@ -19,6 +27,10 @@ import EmptyState from '../empty-state/empty-state';
 export default class Home extends React.Component {
   constructor() {
     super();
+    AWS.config.region = 'eu-west-1' // your region
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
+    });
     this.state = {
       fetchedInstances: false,
       instances: [],
@@ -70,43 +82,60 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
-      var self = this;
-      var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
-      // this.timer = setInterval(() =>
-      axios.get(gateway_url + 'populate/', {
-        headers: { 'Content-Type': 'application/json' }
-      })
-      .then(response => {
-        console.log(response.data);
-        self.setState({ instances: response.data, fetchedInstances: true });
-        // for (let i = 0; i < response.data.length; i++)
-        // {
-        //   var id = response.data[i].metadata.instanceId;
-        //   axios.get(gateway_url + 'pollstatus/?ID=' + id, {
-        //     headers: { 'Content-Type': 'application/json' }
-        //   }).then(res => 
-        //   {
-        //     console.log(res.data)
-        //     console.log(response.data[i])
-        //     if( res.data.h == 2 | res.data.h == 1)
-        //     {
-        //     self.state.instances[i].status.health.passed = res.data.h;
-        //     }
-        //     else 
-        //     { self.state.instances[i].status.health.passed = 0;}
-        //     self.state.instances[i].status.health.amount = 2;
-        //     self.setState({ instances: self.state.instances });
-        //   });
-        // }
-      })
-      .catch(error => {
-        console.log('error', error);
-      });
-      // , 15000);
+    var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
+    axios.get(gateway_url + 'populate/', {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => {
+      this.setState({ instances: response.data, fetchedInstances: true });
+      this.connectToWebSocket()
+    })
+    .catch(error => {
+      console.log('error', error);
+    });
+
   }
 
-  componentWillUnmount() {
-    clearInterval(this.timer);
+  connectToWebSocket() {
+    var cognitoidentity = new AWS.CognitoIdentity();
+
+    cognitoidentity.getCredentialsForIdentity({
+      IdentityId: AWS.config.credentials.params.IdentityId
+    }, (err, data) => {
+      if(err) return;
+
+      var credentials = {
+        accessKeyId: data.Credentials.AccessKeyId,
+        secretAccessKey: data.Credentials.SecretKey,
+        sessionToken: data.Credentials.SessionToken
+      };
+      var host = 'av0upm8irjpyk-ats.iot.eu-west-1.amazonaws.com';
+      var wsUrl = new AWSwebsocket().getSignedUrl(host, 'eu-west-1', credentials);
+      var client = new Paho.MQTT.Client(wsUrl, 'test-'+Math.floor(Math.random() * 1243454));
+      var connectOptions = {
+        // useSSL: true,
+        timeout: 3,
+        mqttVersion: 4,
+        onSuccess: () => {
+          console.log("Connected to websockets");
+          client.subscribe('ilb/webapp', {
+            onSuccess: () => {
+              console.log('subscribed to topic: ilb/webapp');
+            }
+          });
+        },
+        onFailure: (err) => {
+          console.log(`connect failed: ${err.errorMessage}`);
+        },
+
+      };
+
+      client.connect(connectOptions);
+      client.onMessageArrived = (message) => {
+        console.log(message.payloadString);
+      };
+    });
+
   }
 
   updateFilters() {
