@@ -156,13 +156,16 @@ export default class Home extends React.Component {
   cloudWatchActionEvent(message) {
     // const instanceId = message.detail.requestParameters.instancesSet.items[0].instanceId;
     // const eventName = message.detail.eventName;
-    console.log(message);
     switch (message["detail-type"]) {
       case 'EC2 Instance State-change Notification':
         this.changeInstanceState(message);
         break;
       case 'AWS API Call via CloudTrail':
         this.changeInstance(message);
+        break;
+      case 'AWS Health Event':
+        console.log('health event', message);
+        break;
       default:
         console.log("unregistered event", message);
         break;
@@ -178,6 +181,21 @@ export default class Home extends React.Component {
             message.detail.requestParameters.resourcesSet.items[0].resourceId
           );
         }
+        break;
+      case 'StopInstances':
+      case 'StartInstances':
+        console.log(message);
+        break;
+      case 'DeleteSecurityGroup':
+      case 'RunInstances':
+      case 'AuthorizeSecurityGroupIngress':
+      case 'CreateSecurityGroup':
+      case 'TerminateInstances':
+      case 'DeleteNetworkInterface':
+        // Do nothing
+        break;
+      default:
+        console.log(message.detail.eventName);
         break;
     }
   }
