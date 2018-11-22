@@ -72,8 +72,8 @@ export default class Home extends React.Component {
           items: [
             { verbose: "Pending", matchValue: 0, active: true },
             { verbose: "Running", matchValue: 16, active: true },
-            { verbose: "Shutting-down", matchValue: 32, active: true },
-            { verbose: "Terminated", matchValue: 48, active: true },
+            // { verbose: "Shutting-down", matchValue: 32, active: true },
+            // { verbose: "Terminated", matchValue: 48, active: true },
             { verbose: "Stopping", matchValue: 64, active: true },
             { verbose: "Stopped", matchValue: 80, active: true }
           ]
