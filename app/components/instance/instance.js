@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+import Modal from 'react-modal';
 
 import axios from 'axios';
 
@@ -32,6 +34,7 @@ export default class Instance extends React.Component  {
     super();
     this.state = {
       instance: props.instance,
+      modalIsOpen: false,
       websocketConnecting: 0 // 0: inactive, 1: starting, 2: connected, 3: error
     }
   }
@@ -48,6 +51,7 @@ export default class Instance extends React.Component  {
     this.setState({polltimer: pollTimer});
 
     this.connectToWebSocket();
+    Modal.setAppElement('#app');
   }
 
   componentWillUnmount(){
@@ -186,6 +190,13 @@ export default class Instance extends React.Component  {
     });
   }
 
+  openModal() {
+    this.setState({modalIsOpen: true});
+  }
+  closeModal() {
+    this.setState({modalIsOpen: false});
+  }
+
   render() {
     var instanceState;
     var buttonDisabled = true;
@@ -275,7 +286,7 @@ export default class Instance extends React.Component  {
     return (
       <div className={ `c-instance ${environment}` }>
         <span className={`o-websocket o-websocket--connection-state--${this.state.websocketConnecting}`}></span>
-        <header>
+        <header onClick={() => this.openModal()}>
           <h1>{this.state.instance.metadata.verbose}</h1>
           <span>{this.state.instance.metadata.name}</span>
         </header>
@@ -310,6 +321,13 @@ export default class Instance extends React.Component  {
         <button disabled={buttonDisabled} onClick={() => this.toggleInstanceState() }>
           {buttonIcon} {buttonVerbose}
         </button>
+
+        <Modal
+          isOpen={this.state.modalIsOpen}
+          contentLabel="Example Modal">
+          Sample modal
+          <button onClick={() => this.closeModal() }>close</button>
+        </Modal>
       </div>
     )
   }
