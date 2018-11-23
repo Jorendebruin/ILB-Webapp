@@ -49,6 +49,10 @@
       align-items: center;
 
       &.state {
+        &--inactive {
+          color: map-get($states, inactive);
+          svg { fill: map-get($states, inactive); }
+        }
         &--ok {
           color: map-get($states, ok);
           svg { fill: map-get($states, ok); }
