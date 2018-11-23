@@ -1,49 +1,14 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
-export default class Home extends React.Component {
+
+export default class InstanceOverview extends React.Component {
+
     constructor(props) {
         super();
-        this.state = {
-            instance: props.instance,
-            showPopup: false
-        }
-    }
-
-    togglePopup() {
-        this.setState({
-            showPopup: !this.state.showPopup
-        });
     }
 
     render() {
-        var instanceState;
-        switch (this.state.instance.instance.state) {
-            case 2:
-                instanceState = 'state--ok';
-                break;
-            case 4:
-                instanceState = 'state--error';
-                break;
-            default:
-                instanceState = 'state--warning';
-                break;
-        }
-
-        var environment;
-        switch (this.state.instance.location.environment) {
-            case 1:
-                environment = 'environment--o';
-                break;
-            case 2:
-                environment = 'environment--t';
-                break;
-            case 3:
-                environment = 'environment--a';
-                break;
-            case 4:
-                environment = 'environment--p';
-                break;
-        }
 
         return (
             <div className="detailOverview">
@@ -51,8 +16,8 @@ export default class Home extends React.Component {
                 </div>
                 <div className="dataOverview">
                     <h2>Meta Data</h2>
-                    <p>Name:</p>
-                    <p>Instance ID</p>
+                    <p>Name: {this.props.instance.metadata.name}</p>
+                    <p>Instance ID: {this.props.instance.metadata.instanceId}</p>
                     <br></br>
                     <h2>Location</h2>
                     <p>Regio</p>
@@ -83,5 +48,6 @@ export default class Home extends React.Component {
                 </div>
             </div>
         );
+
     }
 }

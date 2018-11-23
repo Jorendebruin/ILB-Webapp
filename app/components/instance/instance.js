@@ -1,4 +1,6 @@
 import React from 'react';
+import InstanceOverview from './instanceOverview';
+import ReactDOM from 'react-dom';
 
 import axios from 'axios';
 
@@ -15,11 +17,12 @@ import {
   MdNotifications
 } from 'react-icons/md';
 
-export default class Home extends React.Component  {
+export default class Instance extends React.Component  {
   constructor(props) {
     super();
     this.state = {
-      instance: props.instance
+      instance: props.instance,
+      showOverview: false
     }
   }
 
@@ -73,6 +76,17 @@ export default class Home extends React.Component  {
     });
   }
 
+  toggleInstanceOverview(){
+    
+   this.setState({
+     showOverview: !this.state.showOverview
+   });
+
+    console.log(String(this.state.instance.metadata.instanceId));
+    console.log("getInstanceOverview End...");
+    
+  }
+
   render() {
     var instanceState;
     var buttonDisabled = true;
@@ -112,14 +126,16 @@ export default class Home extends React.Component  {
       minutes: timeDiff.getMinutes()
     };
 
+    
+
     return (
       <div className={ `c-instance ${environment}` }>
-        <header>
+        <header onClick={this.toggleInstanceOverview.bind(this)}>
           <h1>{this.state.instance.metadata.verbose}</h1>
           <span>{this.state.instance.metadata.name}</span>
         </header>
 
-        <ul className="row">
+        <ul className="row"  onClick={() => this.toggleInstanceOverview()}>
           <li className="col-xs-6">
             <MdPlace />
             {this.state.instance.location.branch}
@@ -167,7 +183,15 @@ export default class Home extends React.Component  {
           {this.state.instance.instance.state == 64 ? 'Wating for response' : null}
           {this.state.instance.instance.state == 80 ? 'Start instance' : null}
         </button>
+        {this.state.showOverview ?
+        ReactDOM.render(<InstanceOverview instance={this.state.instance}/>, document.getElementById('main'))
+        :null
+      }
+      
       </div>
+    
+      
     )
   }
+  
 }
