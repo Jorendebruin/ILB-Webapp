@@ -9,16 +9,9 @@ global.Paho = {
   MQTT: PahoMQTT
 }
 
-import AwsWebsocket from '../../lib/websocket/Awswebsocket';
-
 import {
-  API_GATEWAY_EC2,
-  IOT_HOST
+  API_GATEWAY_EC2
 } from '../../lib/constants/endpoints';
-
-import {
-  uuid
-} from '../../lib/functions/uuid';
 
 import {
   MdLocationOn,
@@ -43,7 +36,6 @@ export default class Home extends React.Component {
       instances: [],
       sortBy: null,
       searchFilter: null,
-      websocketConnecting: 0, // 0: inactive, 1: starting, 2: connected, 3: error
       filters: [
         {
           verbose: "Locatie",
@@ -96,158 +88,11 @@ export default class Home extends React.Component {
     })
     .then(response => {
       this.setState({ instances: response.data, fetchedInstances: true });
-      this.connectToWebSocket()
+      //this.connectToWebSocket()
     })
     .catch(error => {
       console.log('error', error);
     });
-
-  }
-
-  connectToWebSocket() {
-    var cognitoidentity = new AWS.CognitoIdentity();
-
-    cognitoidentity.getCredentialsForIdentity({
-      IdentityId: AWS.config.credentials.params.IdentityId
-    }, (err, data) => {
-      if(err) return;
-
-      var credentials = {
-        accessKeyId: data.Credentials.AccessKeyId,
-        secretAccessKey: data.Credentials.SecretKey,
-        sessionToken: data.Credentials.SessionToken
-      };
-
-      var websocketUrl = new AwsWebsocket().getSignedUrl(IOT_HOST, 'eu-west-1', credentials);
-
-      var client = new Paho.MQTT.Client(websocketUrl, uuid());
-      var connectOptions = {
-        useSSL: true,
-        timeout: 3,
-        mqttVersion: 4,
-        reconnect: true,
-        onSuccess: () => {
-          this.setState({websocketConnecting: 2});
-          client.subscribe('ilb/webapp/cloudwatch');
-          client.subscribe('ilb/webapp/user');
-        },
-        onFailure: (err) => {
-          this.setState({websocketConnecting: 3});
-          console.log(`connect failed: ${err.errorMessage}`);
-        }
-      };
-
-      // Connecting to client
-      this.setState({websocketConnecting: 1});
-      client.connect(connectOptions);
-
-      client.onConnectionLost = (err) => {
-        this.setState({websocketConnecting: 3});
-        console.log(`connect loast: ${err.errorMessage}`);
-      };
-
-      client.onMessageArrived = (message) => {
-        switch (message.topic) {
-          case 'ilb/webapp/cloudwatch':
-            this.cloudWatchActionEvent(JSON.parse(message.payloadString));
-            break;
-          case 'ilb/webapp/user':
-            // Do something here on user actions
-            break;
-        }
-      };
-    });
-  }
-
-  userActionEvent(message) {
-
-  }
-
-  cloudWatchActionEvent(message) {
-    // const instanceId = message.detail.requestParameters.instancesSet.items[0].instanceId;
-    // const eventName = message.detail.eventName;
-    switch (message["detail-type"]) {
-      case 'EC2 Instance State-change Notification':
-        this.changeInstanceState(message);
-        break;
-      case 'EBS Volume Notification':
-        // Do something here
-        break;
-      case 'AWS API Call via CloudTrail':
-        this.changeInstance(message);
-        break;
-      case 'AWS Health Event':
-        console.log('health event', message);
-        break;
-      default:
-        console.log("unregistered event", message);
-        break;
-    }
-  }
-
-  changeInstance(message) {
-    switch (message.detail.eventName) {
-      case 'CreateTags':
-        if(message.detail.requestParameters.tagSet.items.find(tag => {return tag.key.toLowerCase() == 'name';})) {
-          this.changeInstanceName(
-            message.detail.requestParameters.tagSet.items.find(tag => {return tag.key.toLowerCase() == 'name';}).value,
-            message.detail.requestParameters.resourcesSet.items[0].resourceId
-          );
-        }
-        break;
-      case 'StopInstances':
-      case 'StartInstances':
-        console.log(message);
-        break;
-      case 'DeleteSecurityGroup':
-      case 'RunInstances':
-      case 'AuthorizeSecurityGroupIngress':
-      case 'CreateSecurityGroup':
-      case 'TerminateInstances':
-      case 'DeleteNetworkInterface':
-      case 'CreateNetworkInterface':
-        // Do nothing
-        break;
-      default:
-        console.log(message.detail.eventName);
-        break;
-    }
-  }
-
-  changeInstanceName(name, instanceId) {
-    var instance = this.state.instances.find(instance => {
-      return instance.metadata.instanceId == instanceId;
-    });
-
-    if(!instance) return; // When we don't have the instance, we don't care
-
-    instance.metadata.name = name;
-    this.forceUpdate();
-  }
-
-  changeInstanceState(message) {
-    var instance = this.state.instances.find(instance => {
-      return instance.metadata.instanceId == message.detail["instance-id"];
-    });
-
-    if(!instance) return; // When we don't have the instance, we don't care
-
-    switch (message.detail.state) {
-      case 'pending':
-        instance.instance.state = 0;
-        break;
-      case 'running':
-        instance.instance.state = 16;
-        break;
-      case 'stopping':
-        instance.instance.state = 64;
-        break;
-      case 'stopped':
-        instance.instance.state = 80;
-        break;
-    }
-
-    this.forceUpdate();
   }
 
   updateFilters() {
@@ -455,12 +300,9 @@ export default class Home extends React.Component {
                 </input>
               </div>
             </div>
-            <h1 className="title col-xs-9">
+            <h1 className="title col-xs-12">
               Instances ({instances.length})
             </h1>
-            <div className="col-xs-3 socket-connection">
-              Live connect <span className={`o-websocket o-websocket--connection-state--${this.state.websocketConnecting}`}></span>
-            </div>
           </section>
           <section className="row scroll-overflow">
             { !this.state.fetchedInstances ? <EmptyState title="Loading" subtitle="Getting instances from AWS"></EmptyState> : null }

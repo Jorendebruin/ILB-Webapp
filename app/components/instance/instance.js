@@ -2,9 +2,16 @@ import React from 'react';
 
 import axios from 'axios';
 
+import AwsWebsocket from '../../lib/websocket/Awswebsocket';
+
+import {
+  uuid
+} from '../../lib/functions/uuid';
+
 import {
   API_GATEWAY_EC2,
-  API_GATEWAY_DYNAMODB
+  API_GATEWAY_DYNAMODB,
+  IOT_HOST
 } from '../../lib/constants/endpoints';
 
 import {
@@ -24,7 +31,8 @@ export default class Instance extends React.Component  {
   constructor(props) {
     super();
     this.state = {
-      instance: props.instance
+      instance: props.instance,
+      websocketConnecting: 0 // 0: inactive, 1: starting, 2: connected, 3: error
     }
   }
 
@@ -37,11 +45,74 @@ export default class Instance extends React.Component  {
       this.poll();
     }, 5 * 60 * 1000);
 
-    this.setState({polltimer: pollTimer})
+    this.setState({polltimer: pollTimer});
+
+    this.connectToWebSocket();
   }
 
   componentWillUnmount(){
     clearInterval(this.state.pollTimer);
+  }
+
+  connectToWebSocket() {
+    AWS.config.credentials.get(() => {
+
+      const websocketUrl = new AwsWebsocket().getSignedUrl(IOT_HOST, AWS.config.region, AWS.config.credentials);
+
+      const client = new Paho.MQTT.Client(websocketUrl, uuid());
+      const connectOptions = {
+        useSSL: true,
+        timeout: 3,
+        mqttVersion: 4,
+        reconnect: true,
+        onSuccess: () => {
+          this.setState({websocketConnecting: 2});
+          client.subscribe('ilb/webapp/instance/'+this.state.instance.metadata.instanceId);
+          client.subscribe('ilb/webapp/usermessage');
+        },
+        onFailure: (err) => {
+          this.setState({websocketConnecting: 3});
+          console.log(`connect failed: ${err.errorMessage}`);
+        }
+      };
+
+      // Connecting to client
+      this.setState({websocketConnecting: 1});
+      client.connect(connectOptions);
+
+      client.onConnectionLost = (err) => {
+        this.setState({websocketConnecting: 3});
+        console.log(`connect lost: ${err.errorMessage}`);
+      };
+
+      client.onMessageArrived = (message) => {
+        switch (message.topic) {
+          case 'ilb/webapp/usermessage':
+            this.userActionEvent(JSON.parse(message.payloadString));
+            break;
+          default:
+            this.cloudWatchActionEvent(JSON.parse(message.payloadString));
+            break;
+        }
+      };
+    });
+  }
+
+  userActionEvent(message) {
+    // Do something here on user actions
+  }
+
+  cloudWatchActionEvent(payload) {
+    switch (payload.type) {
+      case 'stateChange':
+        this.state.instance.instance.state = payload.message.state;
+        break;
+      case 'nameChange':
+        this.state.instance.metadata.name = payload.message.name;
+        break;
+    }
+
+    this.updateInstance();
   }
 
   poll() {
@@ -203,6 +274,7 @@ export default class Instance extends React.Component  {
 
     return (
       <div className={ `c-instance ${environment}` }>
+        <span className={`o-websocket o-websocket--connection-state--${this.state.websocketConnecting}`}></span>
         <header>
           <h1>{this.state.instance.metadata.verbose}</h1>
           <span>{this.state.instance.metadata.name}</span>
