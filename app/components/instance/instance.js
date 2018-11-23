@@ -3,6 +3,11 @@ import React from 'react';
 import axios from 'axios';
 
 import {
+  EC2_API_GATEWAY,
+  DYNAMODB_API_GATEWAY
+} from '../../lib/constants/endpoints';
+
+import {
   MdPlace,
   MdWatchLater,
   MdSync,
@@ -96,9 +101,8 @@ export default class Instance extends React.Component  {
 	  console.log('Alias get error: ', error);
 	});
   }
-  
+
   toggleInstanceState() {
-    const gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
     var state = this.state.instance.instance.state;
 
     // You can only toggle the state when it's either running (16) or stopped (80)
@@ -107,7 +111,7 @@ export default class Instance extends React.Component  {
     this.state.instance.instance.state = state == 16 ? 64 : 0;
     this.updateInstance();
 
-    axios.get(gateway_url + (state == 16 ? 'stop' : 'start'), {
+    axios.get(EC2_API_GATEWAY + (state == 16 ? 'stop' : 'start'), {
       params: {
         ID: this.state.instance.metadata.instanceId
       }
