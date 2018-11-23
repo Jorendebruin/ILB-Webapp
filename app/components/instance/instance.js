@@ -113,7 +113,6 @@ export default class Instance extends React.Component  {
       }
     })
     .then((response) => {
-      clearInterval(this.state.pollTimer)
     })
     .catch((error) => {
       console.log('error', error);
