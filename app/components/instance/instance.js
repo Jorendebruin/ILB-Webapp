@@ -23,12 +23,83 @@ export default class Instance extends React.Component  {
     }
   }
 
+  componentDidMount() {
+    this.poll();
+    this.getAliasInstances();
+   var pollTimer = setInterval(() => {
+      this.poll();
+    }, 20000);
+    this.setState({polltimer: pollTimer})
+
+
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.state.pollTimer);
+  }
+
+  poll() {
+    var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
+    var id = this.state.instance.metadata.instanceId;
+    
+    //Updating time and state of instance
+    axios.get(gateway_url + 'describe/?ID=' + id, {
+      headers: { 'Content-Type': 'application/json' }
+    }).then(result =>
+      {
+        this.state.instance.instance.state = result.data.instance.state;
+        this.state.instance.instance.startuptime = result.data.instance.startuptime;
+        this.updateInstance();
+      });
+    
+    // If instance is not running(16), there's no need to perform health-checks
+    if (this.state.instance.instance.state != 16) return;
+
+    //Updating of Health Checks of instance
+    axios.get(gateway_url + 'pollstatus/?ID=' + id, {
+      headers: { 'Content-Type': 'application/json' }
+    }).then(res => 
+    {
+      console.log(res.data)
+      if(!res.data.errorMessage)
+      {
+      this.state.instance.status.health.passed = res.data.h;
+      }
+      else 
+      { this.state.instance.status.health.passed = 0;
+      }
+      this.state.instance.status.health.amount = 2;
+      this.updateInstance();
+    });
+  }
+
   updateInstance() {
     this.setState({
       instance: this.state.instance
     });
   }
 
+  getAliasInstances() {		
+	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/";
+	var instanceId = this.state.instance.metadata.instanceId;
+		
+	axios.get(Alias_gateway_url,
+	  {
+		  headers: { 'Content-Type': 'application/json' },
+		  params: { InstanceId: instanceId }
+	  })
+	.then((response) => {
+		if (typeof response.data.Item != 'undefined')
+		{
+			this.state.instance.metadata.verbose = response.data.Item.InstanceAlias.S;
+			this.updateInstance();
+		}
+	})
+	.catch((error) => {
+	  console.log('Alias get error: ', error);
+	});
+  }
+  
   toggleInstanceState() {
     const gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
     var state = this.state.instance.instance.state;
@@ -45,8 +116,9 @@ export default class Instance extends React.Component  {
       }
     })
     .then((response) => {
+      clearInterval(this.state.pollTimer)
     })
-    .catch((err) => {
+    .catch((error) => {
       console.log('error', error);
     });
   }
