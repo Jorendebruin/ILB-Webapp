@@ -125,12 +125,12 @@ export default class Instance extends React.Component  {
     var buttonDisabled = true;
     switch (this.state.instance.instance.state) {
       case 16:
-        buttonDisabled = false;
         instanceState = 'state--ok';
+        buttonDisabled = false;
         break;
       case 80:
-        buttonDisabled = false;
         instanceState = 'state--error';
+        buttonDisabled = false;
         break;
       default:
         instanceState = 'state--warning';
