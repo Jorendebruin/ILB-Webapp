@@ -45,36 +45,29 @@ export default class Instance extends React.Component  {
   }
 
   poll() {
-    var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
-    var id = this.state.instance.metadata.instanceId;
-    
-    //Updating time and state of instance
-    axios.get(gateway_url + 'describe/?ID=' + id, {
-      headers: { 'Content-Type': 'application/json' }
-    }).then(result =>
-      {
-        this.state.instance.instance.state = result.data.instance.state;
-        this.state.instance.instance.startuptime = result.data.instance.startuptime;
-        this.updateInstance();
-      });
-    
     // If instance is not running(16), there's no need to perform health-checks
-    if (this.state.instance.instance.state != 16) return;
+    if (this.state.instance.instance.state != 16) {
+      this.state.instance.status.health.state = 0;
+      this.updateInstance();
+      return;
+    }
 
     //Updating of Health Checks of instance
-    axios.get(gateway_url + 'pollstatus/?ID=' + id, {
-      headers: { 'Content-Type': 'application/json' }
-    }).then(res => 
-    {
-      console.log(res.data)
-      if(!res.data.errorMessage)
-      {
-      this.state.instance.status.health.passed = res.data.h;
+    axios.get(EC2_API_GATEWAY + 'pollstatus', {
+      headers: { 'Content-Type': 'application/json' },
+      params: {
+        ID: this.state.instance.metadata.instanceId
       }
-      else 
-      { this.state.instance.status.health.passed = 0;
+    }).then(res => {
+      if(res.data.s == 'initializing') {
+        this.state.instance.status.health.state = 1
+        this.updateInstance();
+        return;
       }
-      this.state.instance.status.health.amount = 2;
+
+      this.state.instance.status.health.state = 2;
+      this.state.instance.status.health.passed = !res.data.errorMessage ? res.data.h : 0;
+
       this.updateInstance();
     });
   }
@@ -194,6 +187,23 @@ export default class Instance extends React.Component  {
         break;
     }
 
+    var healthChecks;
+    var healthState;
+    switch (this.state.instance.status.health.state) {
+      case 0:
+        healthChecks = '-';
+        healthState = 'inactive';
+        break;
+      case 1:
+        healthChecks = 'Initializing';
+        healthState = 'warning';
+        break;
+      case 2:
+        healthChecks = `${this.state.instance.status.health.passed}/${this.state.instance.status.health.amount}`;
+        healthState = this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'error' : 'ok';
+        break;
+    }
+
     return (
       <div className={ `c-instance ${environment}` }>
         <header>
@@ -210,10 +220,9 @@ export default class Instance extends React.Component  {
             <MdGroupWork />
             {this.state.instance.location.availabilityZone}
           </li>
-          <li className={`col-xs-6 ${this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'state--warning' : 'state--ok'}`}>
+          <li className={`col-xs-6 state--${healthState}`}>
             <MdHealing />
-            {this.state.instance.status.health.passed}/{this.state.instance.status.health.amount}
-            &nbsp;checks
+            { healthChecks }
           </li>
           <li className="col-xs-6">
             <MdNotifications />
@@ -223,7 +232,7 @@ export default class Instance extends React.Component  {
             <MdExplore />
             {instanceStateVerbose}
           </li>
-          <li className="col-xs-6">
+          <li className={`col-xs-6 ${this.state.instance.instance.state != 16 ? 'state--inactive': ''}`}>
             <MdWatchLater />
             { this.state.instance.instance.state == 16 ? runTime.hours+'h '+runTime.minutes+'m' : '-'}
           </li>
