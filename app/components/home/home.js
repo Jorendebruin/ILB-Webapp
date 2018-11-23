@@ -37,10 +37,7 @@ import EmptyState from '../empty-state/empty-state';
 export default class Home extends React.Component {
   constructor() {
     super();
-    AWS.config.region = 'eu-west-1' // your region
-    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-      IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
-    });
+
     this.state = {
       fetchedInstances: false,
       instances: [],
@@ -122,7 +119,7 @@ export default class Home extends React.Component {
       };
 
       var websocketUrl = new AwsWebsocket().getSignedUrl(IOT_HOST, 'eu-west-1', credentials);
-      var wsUrl = new AWSwebsocket().getSignedUrl(host, 'eu-west-1', credentials);
+
       var client = new Paho.MQTT.Client(websocketUrl, uuid());
       var connectOptions = {
         useSSL: true,
@@ -153,6 +150,9 @@ export default class Home extends React.Component {
         switch (message.topic) {
           case 'ilb/webapp/cloudwatch':
             this.cloudWatchActionEvent(JSON.parse(message.payloadString));
+            break;
+          case 'ilb/webapp/user':
+            // Do something here on user actions
             break;
         }
       };
