@@ -202,6 +202,7 @@ export default class Home extends React.Component {
       case 'CreateSecurityGroup':
       case 'TerminateInstances':
       case 'DeleteNetworkInterface':
+      case 'CreateNetworkInterface':
         // Do nothing
         break;
       default:
