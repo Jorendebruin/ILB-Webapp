@@ -28,7 +28,7 @@
 
     .title {
       font-size: 1.5em;
-      margin: 1em 0 0 0;
+      margin: 0;
     }
   }
 
@@ -91,24 +91,26 @@
 .dark {
   .homePage {
     .search {
-      color: #bdbdbd;
+      color: map-get($text, lighter);
       background: #424242;
       border-color: #212121;
       input {
-        color: #bdbdbd;
         background: #424242;
       }
     }
     .c-scrollable {
       .title {
-        color: #bdbdbd;
+        color: map-get($text, lighter);
+      }
+      .socket-connection {
+        color: map-get($text, lighter);
       }
     }
     .c-sidebar {
       .filter-group {
         h2 {
           .filter-group__sort {
-            color: #bdbdbd;
+            color: map-get($text, light);
 
             &:hover {
               color: map-get($colors, red);

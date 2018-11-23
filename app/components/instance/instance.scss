@@ -22,13 +22,17 @@
     &--p { border-top-color: map-get($colors, red); }
   }
 
+  .o-websocket {
+    position: absolute;
+  }
+
   header {
     text-align: center;
 
     h1 {
       margin: 0;
       padding: .75em 0 0 0;
-      font-size: 1.5em;
+      font-size: 1.25em;
       font-weight: 600;
     }
     span {
@@ -49,6 +53,10 @@
       align-items: center;
 
       &.state {
+        &--inactive {
+          color: map-get($states, inactive);
+          svg { fill: map-get($states, inactive); }
+        }
         &--ok {
           color: map-get($states, ok);
           svg { fill: map-get($states, ok); }
@@ -94,7 +102,7 @@
 
     &[disabled] {
       cursor: not-allowed;
-      color: map-get($text, lighter);
+      color: map-get($text, light);
     }
   }
 }

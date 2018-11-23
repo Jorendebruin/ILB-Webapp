@@ -5,7 +5,7 @@
   h1 {
     font-size: 2em;
     margin: 0.25em 0;
-    color: #9E9E9E;
+    color: map-get($color, lightest);
     font-weight: 400;
   }
 
@@ -45,10 +45,10 @@
 .dark {
   .sidebar {
     background: #212121;
-    color: #bdbdbd;
+    color: map-get($color, lighter);
 
     h1 {
-      color: #616161;
+      color: map-get($color, light);
     }
   }
 }
