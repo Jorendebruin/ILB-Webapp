@@ -73,9 +73,7 @@ export default class Instance extends React.Component  {
   }
 
   updateInstance() {
-    this.setState({
-      instance: this.state.instance
-    });
+    this.setState({ instance: this.state.instance });
   }
 
   getInstanceAlias() {
