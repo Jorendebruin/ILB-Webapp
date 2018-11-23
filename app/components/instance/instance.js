@@ -24,8 +24,7 @@ export default class Instance extends React.Component  {
   }
 
   componentDidMount() {
-    this.poll();
-    this.getAliasInstances();
+    this.getInstanceAlias();
    var pollTimer = setInterval(() => {
       this.poll();
     }, 20000);
@@ -79,7 +78,7 @@ export default class Instance extends React.Component  {
     });
   }
 
-  getAliasInstances() {		
+  getInstanceAlias() {
 	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/";
 	var instanceId = this.state.instance.metadata.instanceId;
 		
