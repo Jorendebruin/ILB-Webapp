@@ -235,7 +235,7 @@ export default class Instance extends React.Component  {
           {this.state.instance.instance.state == 80 ? 'Start instance' : null}
         </button>
         {this.state.showOverview ?
-        ReactDOM.render(<InstanceOverview instance={this.state.instance}/>, document.getElementById('main'))
+       ReactDOM.render(<InstanceOverview instance={this.state.instance} closeOverview={this.toggleInstanceOverview.bind(this)}/>, document.getElementById('main'))        
         :null
       }
       
