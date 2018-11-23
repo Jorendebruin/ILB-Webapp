@@ -11,6 +11,11 @@ global.Paho = {
 import AWSwebsocket from '../../lib/websocket/awswebsocket';
 
 import {
+import {
+  uuid
+} from '../../lib/functions/uuid';
+
+import {
   MdLocationOn,
   MdCheckBox,
   MdCheckBoxOutlineBlank,
@@ -113,7 +118,7 @@ export default class Home extends React.Component {
 
       var host = 'av0upm8irjpyk-ats.iot.eu-west-1.amazonaws.com';
       var wsUrl = new AWSwebsocket().getSignedUrl(host, 'eu-west-1', credentials);
-      var client = new Paho.MQTT.Client(wsUrl, 'test-'+Math.floor(Math.random() * 1243454));
+      var client = new Paho.MQTT.Client(websocketUrl, uuid());
       var connectOptions = {
         useSSL: true,
         timeout: 3,
