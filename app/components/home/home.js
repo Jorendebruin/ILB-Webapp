@@ -8,9 +8,14 @@ import PahoMQTT from 'paho-mqtt'
 global.Paho = {
   MQTT: PahoMQTT
 }
-import AWSwebsocket from '../../lib/websocket/awswebsocket';
+
+import AwsWebsocket from '../../lib/websocket/Awswebsocket';
 
 import {
+  API_GATEWAY_EC2,
+  IOT_HOST
+} from '../../lib/constants/endpoints';
+
 import {
   uuid
 } from '../../lib/functions/uuid';
@@ -88,8 +93,7 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
-    var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
-    axios.get(gateway_url + 'populate/', {
+    axios.get(API_GATEWAY_EC2 + 'populate/', {
       headers: { 'Content-Type': 'application/json' }
     })
     .then(response => {
@@ -116,7 +120,7 @@ export default class Home extends React.Component {
         sessionToken: data.Credentials.SessionToken
       };
 
-      var host = 'av0upm8irjpyk-ats.iot.eu-west-1.amazonaws.com';
+      var websocketUrl = new AwsWebsocket().getSignedUrl(IOT_HOST, 'eu-west-1', credentials);
       var wsUrl = new AWSwebsocket().getSignedUrl(host, 'eu-west-1', credentials);
       var client = new Paho.MQTT.Client(websocketUrl, uuid());
       var connectOptions = {
