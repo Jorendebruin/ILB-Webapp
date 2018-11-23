@@ -170,6 +170,9 @@ export default class Home extends React.Component {
       case 'EC2 Instance State-change Notification':
         this.changeInstanceState(message);
         break;
+      case 'EBS Volume Notification':
+        // Do something here
+        break;
       case 'AWS API Call via CloudTrail':
         this.changeInstance(message);
         break;
