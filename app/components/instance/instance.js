@@ -17,7 +17,7 @@ import {
   MdNotifications
 } from 'react-icons/md';
 
-export default class Instance extends React.Component  {
+export default class Instance extends React.Component {
   constructor(props) {
     super();
     this.state = {
@@ -29,47 +29,44 @@ export default class Instance extends React.Component  {
   componentDidMount() {
     this.poll();
     this.getAliasInstances();
-   var pollTimer = setInterval(() => {
+    var pollTimer = setInterval(() => {
       this.poll();
     }, 20000);
-    this.setState({polltimer: pollTimer})
+    this.setState({ polltimer: pollTimer })
 
 
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearInterval(this.state.pollTimer);
   }
 
   poll() {
     var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
     var id = this.state.instance.metadata.instanceId;
-    
+
     //Updating time and state of instance
     axios.get(gateway_url + 'describe/?ID=' + id, {
       headers: { 'Content-Type': 'application/json' }
-    }).then(result =>
-      {
-        this.state.instance.instance.state = result.data.instance.state;
-        this.state.instance.instance.startuptime = result.data.instance.startuptime;
-        this.updateInstance();
-      });
-    
+    }).then(result => {
+      this.state.instance.instance.state = result.data.instance.state;
+      this.state.instance.instance.startuptime = result.data.instance.startuptime;
+      this.updateInstance();
+    });
+
     // If instance is not running(16), there's no need to perform health-checks
     if (this.state.instance.instance.state != 16) return;
 
     //Updating of Health Checks of instance
     axios.get(gateway_url + 'pollstatus/?ID=' + id, {
       headers: { 'Content-Type': 'application/json' }
-    }).then(res => 
-    {
+    }).then(res => {
       console.log(res.data)
-      if(!res.data.errorMessage)
-      {
-      this.state.instance.status.health.passed = res.data.h;
+      if (!res.data.errorMessage) {
+        this.state.instance.status.health.passed = res.data.h;
       }
-      else 
-      { this.state.instance.status.health.passed = 0;
+      else {
+        this.state.instance.status.health.passed = 0;
       }
       this.state.instance.status.health.amount = 2;
       this.updateInstance();
@@ -82,33 +79,32 @@ export default class Instance extends React.Component  {
     });
   }
 
-  getAliasInstances() {		
-	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/";
-	var instanceId = this.state.instance.metadata.instanceId;
-		
-	axios.get(Alias_gateway_url,
-	  {
-		  headers: { 'Content-Type': 'application/json' },
-		  params: { InstanceId: instanceId }
-	  })
-	.then((response) => {
-		if (typeof response.data.Item != 'undefined')
-		{
-			this.state.instance.metadata.verbose = response.data.Item.InstanceAlias.S;
-			this.updateInstance();
-		}
-	})
-	.catch((error) => {
-	  console.log('Alias get error: ', error);
-	});
+  getAliasInstances() {
+    const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/";
+    var instanceId = this.state.instance.metadata.instanceId;
+
+    axios.get(Alias_gateway_url,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        params: { InstanceId: instanceId }
+      })
+      .then((response) => {
+        if (typeof response.data.Item != 'undefined') {
+          this.state.instance.metadata.verbose = response.data.Item.InstanceAlias.S;
+          this.updateInstance();
+        }
+      })
+      .catch((error) => {
+        console.log('Alias get error: ', error);
+      });
   }
-  
+
   toggleInstanceState() {
     const gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
     var state = this.state.instance.instance.state;
 
     // You can only toggle the state when it's either running (16) or stopped (80)
-    if(state != 16 && state != 80) return;
+    if (state != 16 && state != 80) return;
 
     this.state.instance.instance.state = state == 16 ? 32 : 0;
     this.updateInstance();
@@ -118,24 +114,32 @@ export default class Instance extends React.Component  {
         ID: this.state.instance.metadata.instanceId
       }
     })
-    .then((response) => {
-      console.log('finished', response);
-      clearInterval(this.state.pollTimer)
-    })
-    .catch((error) => {
-      console.log('error', error);
-    });
+      .then((response) => {
+        console.log('finished', response);
+        clearInterval(this.state.pollTimer)
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
   }
 
-  toggleInstanceOverview(){
-    
-   this.setState({
-     showOverview: !this.state.showOverview
-   });
+  toggleInstanceOverview() {
+
+    this.setState({
+      showOverview: !this.state.showOverview
+    });
 
     console.log(String(this.state.instance.metadata.instanceId));
     console.log("getInstanceOverview End...");
-    
+
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.showOverview !== this.props.showOverview) {
+      this.state.showOverview ?
+        ReactDOM.render(<InstanceOverview instance={this.state.instance} closeOverview={this.toggleInstanceOverview.bind(this)} />, document.getElementById('main'))
+        : null
+    }
   }
 
   render() {
@@ -177,16 +181,16 @@ export default class Instance extends React.Component  {
       minutes: timeDiff.getMinutes()
     };
 
-    
+
 
     return (
-      <div className={ `c-instance ${environment}` }>
+      <div className={`c-instance ${environment}`}>
         <header onClick={this.toggleInstanceOverview.bind(this)}>
           <h1>{this.state.instance.metadata.verbose}</h1>
           <span>{this.state.instance.metadata.name}</span>
         </header>
 
-        <ul className="row"  onClick={() => this.toggleInstanceOverview()}>
+        <ul className="row" onClick={() => this.toggleInstanceOverview()}>
           <li className="col-xs-6">
             <MdPlace />
             {this.state.instance.location.branch}
@@ -215,11 +219,11 @@ export default class Instance extends React.Component  {
           </li>
           <li className="col-xs-6">
             <MdWatchLater />
-            { this.state.instance.instance.state == 16 ? runTime.hours+'h '+runTime.minutes+'m' : '-'}
+            {this.state.instance.instance.state == 16 ? runTime.hours + 'h ' + runTime.minutes + 'm' : '-'}
           </li>
         </ul>
 
-        <button disabled={buttonDisabled} onClick={() => this.toggleInstanceState() }>
+        <button disabled={buttonDisabled} onClick={() => this.toggleInstanceState()}>
           {this.state.instance.instance.state == 0 ? <MdSync className="loading" /> : null}
           {this.state.instance.instance.state == 16 ? <MdPause /> : null}
           {this.state.instance.instance.state == 32 ? <MdSync className="loading" /> : null}
@@ -234,15 +238,13 @@ export default class Instance extends React.Component  {
           {this.state.instance.instance.state == 64 ? 'Wating for response' : null}
           {this.state.instance.instance.state == 80 ? 'Start instance' : null}
         </button>
-        {this.state.showOverview ?
-       ReactDOM.render(<InstanceOverview instance={this.state.instance} closeOverview={this.toggleInstanceOverview.bind(this)}/>, document.getElementById('main'))        
-        :null
-      }
-      
+                
+        {this.componentDidUpdate.bind(this)}
+
       </div>
-    
-      
+
+
     )
   }
-  
+
 }

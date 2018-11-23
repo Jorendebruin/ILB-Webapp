@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ConfigurationServicePlaceholders } from 'aws-sdk/lib/config_service_placeholders';
 
 
 export default class InstanceOverview extends React.Component {
@@ -16,8 +15,8 @@ export default class InstanceOverview extends React.Component {
     render() {
 
         return (
-            <div className="detailOverview" id="details">
-               
+            <div className="detailOverview">
+
                 <div className="regionBar">
                 </div>
                 <div className="dataOverview">
@@ -52,14 +51,10 @@ export default class InstanceOverview extends React.Component {
                         </td>
                     </table>
                 </div>
-               
-               {/*
-               <h1>CHECK!!</h1>*/}
-               <div>
-                <button onClick={console.log("Button CLicked!!")}>Close Overview</button> 
+                <div>
+                   <button onClick={console.log("Button Clicked!!")}>Close Overview</button>
                 </div>
             </div>
         );
-
     }
 }
