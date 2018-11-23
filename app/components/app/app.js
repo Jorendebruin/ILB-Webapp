@@ -13,9 +13,11 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    AWS.config.region = 'eu-west-1' // your region
-    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-      IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
+    AWS.config.update({
+      region: 'eu-west-1', // your region
+      credentials: new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
+      }) // Doesnt seem to get identityId this way
     });
   }
 
