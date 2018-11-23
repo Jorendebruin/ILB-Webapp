@@ -77,24 +77,21 @@ export default class Instance extends React.Component  {
   }
 
   getInstanceAlias() {
-	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/";
-	var instanceId = this.state.instance.metadata.instanceId;
-		
-	axios.get(Alias_gateway_url,
-	  {
-		  headers: { 'Content-Type': 'application/json' },
-		  params: { InstanceId: instanceId }
-	  })
-	.then((response) => {
-		if (typeof response.data.Item != 'undefined')
-		{
+  	axios.get(DYNAMODB_API_GATEWAY, {
+  	  headers: { 'Content-Type': 'application/json' },
+  	  params: {
+        InstanceId: this.state.instance.metadata.instanceId
+      }
+    })
+  	.then((response) => {
+      if(!response.data.Item) return;
+
 			this.state.instance.metadata.verbose = response.data.Item.InstanceAlias.S;
 			this.updateInstance();
-		}
-	})
-	.catch((error) => {
-	  console.log('Alias get error: ', error);
-	});
+  	})
+  	.catch((error) => {
+  	  console.log('Alias get error: ', error);
+  	});
   }
 
   toggleInstanceState() {
