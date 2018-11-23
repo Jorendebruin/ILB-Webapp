@@ -1,8 +1,21 @@
 import React from 'react';
 import InstanceOverview from './instanceOverview';
 import ReactDOM from 'react-dom';
+import Modal from 'react-modal';
 
 import axios from 'axios';
+
+import AwsWebsocket from '../../lib/websocket/Awswebsocket';
+
+import {
+  uuid
+} from '../../lib/functions/uuid';
+
+import {
+  API_GATEWAY_EC2,
+  API_GATEWAY_DYNAMODB,
+  IOT_HOST
+} from '../../lib/constants/endpoints';
 
 import {
   MdPlace,
@@ -17,116 +30,164 @@ import {
   MdNotifications
 } from 'react-icons/md';
 
-export default class Instance extends React.Component {
+export default class Instance extends React.Component  {
   constructor(props) {
     super();
     this.state = {
       instance: props.instance,
-      showOverview: false
+      modalIsOpen: false,
+      websocketConnecting: 0 // 0: inactive, 1: starting, 2: connected, 3: error
     }
   }
 
   componentDidMount() {
-    this.poll();
-    this.getAliasInstances();
-    var pollTimer = setInterval(() => {
+    this.getInstanceAlias();
+
+    this.poll(); // poll one time to get some data
+
+    const pollTimer = setInterval(() => {
       this.poll();
-    }, 20000);
-    this.setState({ polltimer: pollTimer })
+    }, 5 * 60 * 1000);
 
+    this.setState({polltimer: pollTimer});
 
+    this.connectToWebSocket();
+    Modal.setAppElement('#app');
   }
 
   componentWillUnmount() {
     clearInterval(this.state.pollTimer);
   }
 
-  poll() {
-    var gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
-    var id = this.state.instance.metadata.instanceId;
+  connectToWebSocket() {
+    AWS.config.credentials.get(() => {
 
-    //Updating time and state of instance
-    axios.get(gateway_url + 'describe/?ID=' + id, {
-      headers: { 'Content-Type': 'application/json' }
-    }).then(result => {
-      this.state.instance.instance.state = result.data.instance.state;
-      this.state.instance.instance.startuptime = result.data.instance.startuptime;
-      this.updateInstance();
+      const websocketUrl = new AwsWebsocket().getSignedUrl(IOT_HOST, AWS.config.region, AWS.config.credentials);
+
+      const client = new Paho.MQTT.Client(websocketUrl, uuid());
+      const connectOptions = {
+        useSSL: true,
+        timeout: 3,
+        mqttVersion: 4,
+        reconnect: true,
+        onSuccess: () => {
+          this.setState({websocketConnecting: 2});
+          client.subscribe('ilb/webapp/instance/'+this.state.instance.metadata.instanceId);
+          client.subscribe('ilb/webapp/usermessage');
+        },
+        onFailure: (err) => {
+          this.setState({websocketConnecting: 3});
+          console.log(`connect failed: ${err.errorMessage}`);
+        }
+      };
+
+      // Connecting to client
+      this.setState({websocketConnecting: 1});
+      client.connect(connectOptions);
+
+      client.onConnectionLost = (err) => {
+        this.setState({websocketConnecting: 3});
+        console.log(`connect lost: ${err.errorMessage}`);
+      };
+
+      client.onMessageArrived = (message) => {
+        switch (message.topic) {
+          case 'ilb/webapp/usermessage':
+            this.userActionEvent(JSON.parse(message.payloadString));
+            break;
+          default:
+            this.cloudWatchActionEvent(JSON.parse(message.payloadString));
+            break;
+        }
+      };
     });
+  }
 
+  userActionEvent(message) {
+    // Do something here on user actions
+  }
+
+  cloudWatchActionEvent(payload) {
+    switch (payload.type) {
+      case 'stateChange':
+        this.state.instance.instance.state = payload.message.state;
+        break;
+      case 'nameChange':
+        this.state.instance.metadata.name = payload.message.name;
+        break;
+    }
+
+    this.updateInstance();
+  }
+
+  poll() {
     // If instance is not running(16), there's no need to perform health-checks
-    if (this.state.instance.instance.state != 16) return;
+    if (this.state.instance.instance.state != 16) {
+      this.state.instance.status.health.state = 0;
+      this.updateInstance();
+      return;
+    }
 
     //Updating of Health Checks of instance
-    axios.get(gateway_url + 'pollstatus/?ID=' + id, {
-      headers: { 'Content-Type': 'application/json' }
+    axios.get(API_GATEWAY_EC2 + 'pollstatus', {
+      headers: { 'Content-Type': 'application/json' },
+      params: {
+        ID: this.state.instance.metadata.instanceId
+      }
     }).then(res => {
-      console.log(res.data)
-      if (!res.data.errorMessage) {
-        this.state.instance.status.health.passed = res.data.h;
+      if(res.data.s == 'initializing') {
+        this.state.instance.status.health.state = 1
+        this.updateInstance();
+        return;
       }
-      else {
-        this.state.instance.status.health.passed = 0;
-      }
-      this.state.instance.status.health.amount = 2;
+
+      this.state.instance.status.health.state = 2;
+      this.state.instance.status.health.passed = !res.data.errorMessage ? res.data.h : 0;
+
       this.updateInstance();
     });
   }
 
   updateInstance() {
-    this.setState({
-      instance: this.state.instance
-    });
+    this.setState({ instance: this.state.instance });
   }
 
-  getAliasInstances() {
-    const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/";
-    var instanceId = this.state.instance.metadata.instanceId;
+  getInstanceAlias() {
+  	axios.get(API_GATEWAY_DYNAMODB, {
+  	  headers: { 'Content-Type': 'application/json' },
+  	  params: {
+        InstanceId: this.state.instance.metadata.instanceId
+      }
+    })
+  	.then((response) => {
+      if(!response.data.Item) return;
 
-    axios.get(Alias_gateway_url,
-      {
-        headers: { 'Content-Type': 'application/json' },
-        params: { InstanceId: instanceId }
-      })
-      .then((response) => {
-        if (typeof response.data.Item != 'undefined') {
-          this.state.instance.metadata.verbose = response.data.Item.InstanceAlias.S;
-          this.updateInstance();
-        }
-      })
-      .catch((error) => {
-        console.log('Alias get error: ', error);
-      });
+			this.state.instance.metadata.verbose = response.data.Item.InstanceAlias.S;
+			this.updateInstance();
+  	})
+  	.catch((error) => {
+  	  console.log('Alias get error: ', error);
+  	});
   }
 
   toggleInstanceState() {
-    const gateway_url = "https://gq4yjqab1g.execute-api.eu-west-1.amazonaws.com/TEST/";
     var state = this.state.instance.instance.state;
 
     // You can only toggle the state when it's either running (16) or stopped (80)
     if (state != 16 && state != 80) return;
 
-    this.state.instance.instance.state = state == 16 ? 32 : 0;
+    this.state.instance.instance.state = state == 16 ? 64 : 0;
     this.updateInstance();
 
-    axios.get(gateway_url + (state == 16 ? 'stop' : 'start'), {
+    axios.get(API_GATEWAY_EC2 + (state == 16 ? 'stop' : 'start'), {
       params: {
         ID: this.state.instance.metadata.instanceId
       }
     })
-      .then((response) => {
-        console.log('finished', response);
-        clearInterval(this.state.pollTimer)
-      })
-      .catch((error) => {
-        console.log('error', error);
-      });
-  }
-
-  toggleInstanceOverview() {
-
-    this.setState({
-      showOverview: !this.state.showOverview
+    .then((response) => {
+    })
+    .catch((error) => {
+      console.log('error', error);
     });
 
     console.log(String(this.state.instance.metadata.instanceId));
@@ -142,17 +203,24 @@ export default class Instance extends React.Component {
     }
   }
 
+  openModal() {
+    this.setState({modalIsOpen: true});
+  }
+  closeModal() {
+    this.setState({modalIsOpen: false});
+  }
+
   render() {
     var instanceState;
     var buttonDisabled = true;
     switch (this.state.instance.instance.state) {
       case 16:
-        buttonDisabled = false;
         instanceState = 'state--ok';
+        buttonDisabled = false;
         break;
       case 80:
-        buttonDisabled = false;
         instanceState = 'state--error';
+        buttonDisabled = false;
         break;
       default:
         instanceState = 'state--warning';
@@ -181,11 +249,57 @@ export default class Instance extends React.Component {
       minutes: timeDiff.getMinutes()
     };
 
+    var buttonIcon = <MdSync className="loading" />;
+    var buttonVerbose = 'Wating for response';
+    var instanceStateVerbose;
+    switch(this.state.instance.instance.state) {
+      case 0:
+        instanceStateVerbose = 'pending';
+        break;
+      case 16:
+        buttonIcon = <MdPause />;
+        buttonVerbose = 'Stop instance';
+        instanceStateVerbose = 'running';
+        break;
+      case 32:
+        instanceStateVerbose = 'shutting-down';
+        break;
+      case 48:
+        buttonIcon = <MdStop />;
+        buttonVerbose = "Instance is terminated";
+        instanceStateVerbose = 'terminated';
+        break;
+      case 64:
+        instanceStateVerbose = 'stopping';
+        break;
+      case 80:
+        buttonIcon = <MdPlayArrow />;
+        buttonVerbose = 'Start instance';
+        instanceStateVerbose = 'stopped';
+        break;
+    }
 
+    var healthChecks;
+    var healthState;
+    switch (this.state.instance.status.health.state) {
+      case 0:
+        healthChecks = '-';
+        healthState = 'inactive';
+        break;
+      case 1:
+        healthChecks = 'Initializing';
+        healthState = 'warning';
+        break;
+      case 2:
+        healthChecks = `${this.state.instance.status.health.passed}/${this.state.instance.status.health.amount}`;
+        healthState = this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'error' : 'ok';
+        break;
+    }
 
     return (
-      <div className={`c-instance ${environment}`}>
-        <header onClick={this.toggleInstanceOverview.bind(this)}>
+      <div className={ `c-instance ${environment}` }>
+        <span className={`o-websocket o-websocket--connection-state--${this.state.websocketConnecting}`}></span>
+        <header onClick={() => this.openModal()}>
           <h1>{this.state.instance.metadata.verbose}</h1>
           <span>{this.state.instance.metadata.name}</span>
         </header>
@@ -199,10 +313,9 @@ export default class Instance extends React.Component {
             <MdGroupWork />
             {this.state.instance.location.availabilityZone}
           </li>
-          <li className={`col-xs-6 ${this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'state--warning' : 'state--ok'}`}>
+          <li className={`col-xs-6 state--${healthState}`}>
             <MdHealing />
-            {this.state.instance.status.health.passed}/{this.state.instance.status.health.amount}
-            &nbsp;checks
+            { healthChecks }
           </li>
           <li className="col-xs-6">
             <MdNotifications />
@@ -210,37 +323,24 @@ export default class Instance extends React.Component {
           </li>
           <li className={`col-xs-6 ${instanceState}`}>
             <MdExplore />
-            {this.state.instance.instance.state == 0 ? 'pending' : null}
-            {this.state.instance.instance.state == 16 ? 'running' : null}
-            {this.state.instance.instance.state == 32 ? 'shutting-down' : null}
-            {this.state.instance.instance.state == 48 ? 'terminated' : null}
-            {this.state.instance.instance.state == 64 ? 'stopping' : null}
-            {this.state.instance.instance.state == 80 ? 'stopped' : null}
+            {instanceStateVerbose}
           </li>
-          <li className="col-xs-6">
+          <li className={`col-xs-6 ${this.state.instance.instance.state != 16 ? 'state--inactive': ''}`}>
             <MdWatchLater />
             {this.state.instance.instance.state == 16 ? runTime.hours + 'h ' + runTime.minutes + 'm' : '-'}
           </li>
         </ul>
 
-        <button disabled={buttonDisabled} onClick={() => this.toggleInstanceState()}>
-          {this.state.instance.instance.state == 0 ? <MdSync className="loading" /> : null}
-          {this.state.instance.instance.state == 16 ? <MdPause /> : null}
-          {this.state.instance.instance.state == 32 ? <MdSync className="loading" /> : null}
-          {this.state.instance.instance.state == 48 ? <MdStop /> : null}
-          {this.state.instance.instance.state == 64 ? <MdSync className="loading" /> : null}
-          {this.state.instance.instance.state == 80 ? <MdPlayArrow /> : null}
-
-          {this.state.instance.instance.state == 0 ? 'Wating for response' : null}
-          {this.state.instance.instance.state == 16 ? 'Stop instance' : null}
-          {this.state.instance.instance.state == 32 ? 'Wating for response' : null}
-          {this.state.instance.instance.state == 48 ? 'Instance is terminated' : null}
-          {this.state.instance.instance.state == 64 ? 'Wating for response' : null}
-          {this.state.instance.instance.state == 80 ? 'Start instance' : null}
+        <button disabled={buttonDisabled} onClick={() => this.toggleInstanceState() }>
+          {buttonIcon} {buttonVerbose}
         </button>
-                
-        {this.componentDidUpdate.bind(this)}
 
+        <Modal
+          isOpen={this.state.modalIsOpen}
+          contentLabel="Example Modal">
+          Sample modal
+          <button onClick={() => this.closeModal() }>close</button>
+        </Modal>
       </div>
 
 

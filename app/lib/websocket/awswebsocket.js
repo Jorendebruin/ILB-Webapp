@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk/global';
 
 // https://docs.aws.amazon.com/iot/latest/developerguide/protocols.html
-export default class AWSwebsocket {
+export default class AwsWebsocket {
   getSignatureKey(key, date, region, service) {
       var kDate = AWS.util.crypto.hmac('AWS4' + key, date, 'buffer');
       var kRegion = AWS.util.crypto.hmac(kDate, region, 'buffer');
@@ -41,7 +41,7 @@ export default class AWSwebsocket {
       }
 
       var requestUrl = protocol + '://' + host + uri + '?' + canonicalQuerystring;
-      
+
       return requestUrl;
   }
 }

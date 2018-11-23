@@ -1,5 +1,7 @@
 import React from 'react';
-import { Router, Link } from 'react-router';
+import { Router } from 'react-router';
+
+import AWS from 'aws-sdk/global';
 
 import MainHeader from '../header/header';
 
@@ -8,6 +10,15 @@ export default class App extends React.Component {
   constructor() {
     super();
     this.state = { showMenu: false }
+  }
+
+  componentDidMount() {
+    AWS.config.update({
+      region: 'eu-west-1', // your region
+      credentials: new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
+      }) // Doesnt seem to get identityId this way
+    });
   }
 
   render() {
