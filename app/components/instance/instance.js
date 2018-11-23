@@ -3,8 +3,8 @@ import React from 'react';
 import axios from 'axios';
 
 import {
-  EC2_API_GATEWAY,
-  DYNAMODB_API_GATEWAY
+  API_GATEWAY_EC2,
+  API_GATEWAY_DYNAMODB
 } from '../../lib/constants/endpoints';
 
 import {
@@ -53,7 +53,7 @@ export default class Instance extends React.Component  {
     }
 
     //Updating of Health Checks of instance
-    axios.get(EC2_API_GATEWAY + 'pollstatus', {
+    axios.get(API_GATEWAY_EC2 + 'pollstatus', {
       headers: { 'Content-Type': 'application/json' },
       params: {
         ID: this.state.instance.metadata.instanceId
@@ -77,7 +77,7 @@ export default class Instance extends React.Component  {
   }
 
   getInstanceAlias() {
-  	axios.get(DYNAMODB_API_GATEWAY, {
+  	axios.get(API_GATEWAY_DYNAMODB, {
   	  headers: { 'Content-Type': 'application/json' },
   	  params: {
         InstanceId: this.state.instance.metadata.instanceId
@@ -103,7 +103,7 @@ export default class Instance extends React.Component  {
     this.state.instance.instance.state = state == 16 ? 64 : 0;
     this.updateInstance();
 
-    axios.get(EC2_API_GATEWAY + (state == 16 ? 'stop' : 'start'), {
+    axios.get(API_GATEWAY_EC2 + (state == 16 ? 'stop' : 'start'), {
       params: {
         ID: this.state.instance.metadata.instanceId
       }
