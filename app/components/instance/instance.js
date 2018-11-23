@@ -30,12 +30,14 @@ export default class Instance extends React.Component  {
 
   componentDidMount() {
     this.getInstanceAlias();
-   var pollTimer = setInterval(() => {
+
+    this.poll(); // poll one time to get some data
+
+    const pollTimer = setInterval(() => {
       this.poll();
-    }, 20000);
+    }, 5 * 60 * 1000);
+
     this.setState({polltimer: pollTimer})
-
-
   }
 
   componentWillUnmount(){
