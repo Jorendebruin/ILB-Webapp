@@ -64,6 +64,7 @@ export default class Home extends React.Component {
           items: [
             { verbose: "Eu-west-1a", matchValue: "eu-west-1a", active: true },
             { verbose: "Eu-west-1b", matchValue: "eu-west-1b", active: true },
+            { verbose: "Eu-west-1c", matchValue: "eu-west-1c", active: true },
           ]
         },
         {
