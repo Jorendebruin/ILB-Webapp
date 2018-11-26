@@ -35,7 +35,7 @@ export default class Home extends React.Component {
       fetchedInstances: false,
       instances: [],
       sortBy: null,
-      searchFilter: null,
+      searchFilter: '',
       filters: [
         {
           verbose: "Locatie",
