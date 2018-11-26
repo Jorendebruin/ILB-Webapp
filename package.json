@@ -41,6 +41,6 @@
     "gulp-watch": "^5.0.1",
     "jest": "^23.6.0",
     "react-test-renderer": "^15.5.4",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^2.0.0"
   }
 }
