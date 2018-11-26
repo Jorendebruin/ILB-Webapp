@@ -9,10 +9,10 @@ export default class EmptyState extends React.Component {
   render() {
     return (
       <section className="c-empty-state">
-        <h1>
+        <h1 className="c-empty-state__title">
           { this.state.title }
         </h1>
-        <span>
+        <span className="c-empty-state__subtitle">
           { this.state.subtitle }
         </span>
       </section>
