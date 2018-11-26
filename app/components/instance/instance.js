@@ -4,6 +4,8 @@ import axios from 'axios';
 
 import AwsWebsocket from '../../lib/websocket/Awswebsocket';
 
+import AWS from 'aws-sdk/global';
+
 import {
   uuid
 } from '../../lib/functions/uuid';
