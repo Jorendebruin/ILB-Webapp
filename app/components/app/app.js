@@ -6,9 +6,11 @@ import MainHeader from '../header/header';
 
 export default class App extends React.Component {
 
-  constructor() {
+  constructor(props) {
     super();
-    this.state = { showMenu: false }
+    this.state = {
+      children: props.children
+    }
   }
 
   componentDidMount() {
@@ -25,7 +27,7 @@ export default class App extends React.Component {
       <div className="wrapper">
         <MainHeader></MainHeader>
         <main>
-          {this.props.children}
+          { this.state.children }
         </main>
       </div>
     );
