@@ -3,6 +3,6 @@ import { shallow } from 'enzyme';
 
 import MainHeader from './header';
 
-it("renders the component", () => {
+it("renders without crasching", () => {
   shallow(<MainHeader />);
 });
