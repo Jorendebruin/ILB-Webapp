@@ -17,7 +17,10 @@ export default class MainHeader extends React.Component {
     this.state = {
       nightModus: (JSON.parse(localStorage.getItem('nightModus')) == true ? true : false)
     }
-    this.toggleNightModus(!JSON.parse(localStorage.getItem('nightModus')));
+  }
+
+  componentWillMount() {
+    this.toggleNightModus(!this.state.nightModus);
   }
 
   toggleNightModus(state) {
