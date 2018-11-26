@@ -1,5 +1,4 @@
 import React from 'react';
-import { Router } from 'react-router';
 
 import AWS from 'aws-sdk/global';
 
