@@ -22,7 +22,7 @@ var config = {
 };
 
 gulp.task('html', () => {
-  gulp.src(config.paths.html)
+  return gulp.src(config.paths.html)
     .pipe(gulp.dest(config.paths.dist))
     .pipe(connect.reload());
 });
@@ -60,7 +60,7 @@ gulp.task('connect', () => {
 });
 
 gulp.task('open', ['connect'], () => {
-  gulp.src(config.paths.dist)
+  return gulp.src(config.paths.dist)
     .pipe(open({
       uri: `${config.uri}:${config.port}`
     }));
