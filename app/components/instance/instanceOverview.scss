@@ -26,10 +26,13 @@ span {
   height: 90%;
 }
 .regionBar {
-  color: purple;
+  padding: 3%;
+  background-color: purple;
 }
 .dataOverview {
   background-color: antiquewhite;
+  float: left;
+  padding-right: 5%;
 }
 
 .instanceList {
@@ -41,4 +44,38 @@ span {
 .listItem {
   font-size: 0.9em;
   text-decoration-color: black;
+}
+.logs {
+  float: left;
+  margin-left: 3%;
+  width: 75.4%;
+}
+.logTable {
+  width: 100%;
+  border-spacing: 0;
+}
+table {
+  background-color: #9e9e9e;
+}
+
+tr :nth-child(odd){
+  background: #9e9e9e;
+}
+
+tr :nth-child(even){
+  background: whitesmoke;
+}
+
+th {
+  background-color: orange !important; 
+  text-align: left;
+  padding-left: 1%;
+  padding-top: 1%;
+  padding-bottom: 1%;
+}
+
+td {
+  padding-left: 1%;
+  padding-top: 1%;
+  padding-bottom: 1%;
 }
