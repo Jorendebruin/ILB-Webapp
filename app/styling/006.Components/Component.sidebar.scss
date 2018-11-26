@@ -44,10 +44,10 @@
 .dark {
   .c-sidebar {
     background: #212121;
-    color: #bdbdbd;
+    color: map-get($text, lighter);
 
     h1 {
-      color: #616161;
+      color: map-get($text, light);
     }
   }
 }
