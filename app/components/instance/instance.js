@@ -247,7 +247,7 @@ export default class Instance extends React.Component  {
     var runTime = {
       hours: timeDiff.getHours(),
       minutes: timeDiff.getMinutes()
-    };
+      };
 
     var buttonIcon = <MdSync className="loading" />;
     var buttonVerbose = 'Wating for response';
@@ -279,22 +279,7 @@ export default class Instance extends React.Component  {
         break;
     }
 
-    var healthChecks;
-    var healthState;
-    switch (this.state.instance.status.health.state) {
-      case 0:
-        healthChecks = '-';
-        healthState = 'inactive';
-        break;
-      case 1:
-        healthChecks = 'Initializing';
-        healthState = 'warning';
-        break;
-      case 2:
-        healthChecks = `${this.state.instance.status.health.passed}/${this.state.instance.status.health.amount}`;
-        healthState = this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'error' : 'ok';
-        break;
-    }
+    var { healthState, healthChecks } = this.getHealthStateAndChecks();
 
     return (
       <div className={ `c-instance ${environment}` }>
@@ -339,7 +324,8 @@ export default class Instance extends React.Component  {
           isOpen={this.state.modalIsOpen}
           contentLabel="Example Modal">
          
-          <InstanceOverview instance={this.state.instance} />
+                <InstanceOverview currentInstance={this.state.instance} />
+                
     
           <button onClick={() => this.closeModal() }>close</button>
         </Modal>
@@ -349,4 +335,24 @@ export default class Instance extends React.Component  {
     )
   }
 
+
+    getHealthStateAndChecks() {
+        var healthChecks;
+        var healthState;
+        switch (this.state.instance.status.health.state) {
+            case 0:
+                healthChecks = '-';
+                healthState = 'inactive';
+                break;
+            case 1:
+                healthChecks = 'Initializing';
+                healthState = 'warning';
+                break;
+            case 2:
+                healthChecks = `${this.state.instance.status.health.passed}/${this.state.instance.status.health.amount}`;
+                healthState = this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'error' : 'ok';
+                break;
+        }
+        return { healthState, healthChecks };
+    }
 }

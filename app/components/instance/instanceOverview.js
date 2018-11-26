@@ -14,38 +14,89 @@ export default class InstanceOverview extends React.Component {
 
     render() {
 
+        var environment;
+        switch (this.props.currentInstance.location.environment) {
+            case 1:
+                environment = 'Development';
+                break;
+            case 2:
+                environment = 'Test';
+                break;
+            case 3:
+                environment = 'Acceptation';
+                break;
+            case 4:
+                environment = 'Production';
+                break;
+        }
+
+        var instanceStateVerbose;
+        switch (this.props.currentInstance.instance.state) {
+            case 0:
+                instanceStateVerbose = 'Pending';
+                break;
+            case 16:
+                instanceStateVerbose = 'Running';
+                break;
+            case 32:
+                instanceStateVerbose = 'Shutting-down';
+                break;
+            case 48:
+                instanceStateVerbose = 'Terminated';
+                break;
+            case 64:
+                instanceStateVerbose = 'Stopping';
+                break;
+            case 80:
+                instanceStateVerbose = 'Stopped';
+                break;
+        }
+
+        var healthChecks;
+        var healthState;
+           switch (this.props.currentInstance.status.health.state) {
+            case 0:
+                healthChecks = 'Not Applicable';
+                healthState = 'Inactive';
+                break;
+            case 1:
+                healthChecks = 'Initializing';
+                healthState = 'Warning';
+                break;
+            case 2:
+                healthChecks = `${this.props.currentInstance.status.health.passed}/${this.props.currentInstance.status.health.amount}`;
+                healthState = this.props.currentInstance.status.health.passed < this.props.currentInstance.status.health.amount ? 'error' : 'ok';
+                break;
+        }
+
+        
         return (
             <div className="detailOverview">
                 <div className="regionBar">
-                {this.props.instance.metadata.name}
+                    {this.props.currentInstance.metadata.name}
                 </div>
                 <div className="dataOverview">
                     <ul className="instanceList">
                         <li className="listHead">Meta Data</li>
                         <br></br>
-                        <li className="listItem">Name: {this.props.instance.metadata.name}</li>
-                        <li className="listItem">Instance ID: {this.props.instance.metadata.instanceId}</li>
-                        <br></br><br></br>
-                        <li className="listHead">Location</li>
+                        <li className="listItem">Name: {this.props.currentInstance.metadata.name}</li>
+                        <li className="listItem">Instance ID: {this.props.currentInstance.metadata.instanceId}</li>
+                        <br></br><br></br> 
+                        <li className="listItem">Location: {this.props.currentInstance.location.branch} </li>
                         <br></br>
-                        <li className="listItem">Regio: </li>
-                        <li className="listItem">Omgeving: </li>
-                        <li className="listItem">Status: </li>
+                        <li className="listItem">Environment: {environment} </li>
+                        <li className="listItem">Availability Zone: {this.props.currentInstance.location.availabilityZone} </li>
                         <br></br><br></br>
-                        <li className="listHead">Instance</li>
+                        <li className="listItem">Status: {instanceStateVerbose} </li>
+                        
                         <br></br>
-                        <li className="listItem">Instance Type: </li>
-                        <li className="listItem">Runtime: </li>
-                        <li className="listItem">Availability Zone: </li>
-                        <br></br><br></br>
-                        <li className="listHead">Status</li>
-                        <br></br>
-                        <li className="listItem">Health: </li>
-                        <li className="listItem">Alarm: </li>
+                        <li className="listItem">Health: {healthState} </li>
+                        <li className="listItem">Health checks: {healthChecks} </li>
                     </ul>
                 </div>
                 <div className="logs">
                     <h1>Log</h1>
+                    <br></br>
                     <table className="logTable">
                         <tr>
                             <th>Time</th>
@@ -70,6 +121,7 @@ export default class InstanceOverview extends React.Component {
                     </table>
                 </div>
             </div>
+            
         );
     }
 }
