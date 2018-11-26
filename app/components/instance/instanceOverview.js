@@ -17,6 +17,7 @@ export default class InstanceOverview extends React.Component {
         return (
             <div className="detailOverview">
                 <div className="regionBar">
+                {this.props.instance.metadata.name}
                 </div>
                 <div className="dataOverview">
                     <ul className="instanceList">
