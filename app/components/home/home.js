@@ -24,7 +24,6 @@ import {
 } from 'react-icons/md';
 
 import Instance from '../instance/instance';
-import InstanceOverview from '../instance/instanceOverview';
 import EmptyState from '../empty-state/empty-state';
 
 export default class Home extends React.Component {

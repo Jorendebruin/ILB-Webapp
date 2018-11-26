@@ -16,27 +16,25 @@ export default class InstanceOverview extends React.Component {
 
         return (
             <div className="detailOverview">
-
                 <div className="regionBar">
                 </div>
                 <div className="dataOverview">
-                    <h2>Meta Data</h2>
-                    <p>Name: {this.props.instance.metadata.name}</p>
-                    <p>Instance ID: {this.props.instance.metadata.instanceId}</p>
-                    <br></br>
-                    <h2>Location</h2>
-                    <p>Regio</p>
-                    <p>Omgeving</p>
-                    <p>Status</p>
-                    <br></br>
-                    <h2>Instance</h2>
-                    <p>Instance type</p>
-                    <p>Runtime</p>
-                    <p>Availability zone</p>
-                    <br></br>
-                    <h2>Status</h2>
-                    <p>Health</p>
-                    <p>Alarm</p>
+                    <ul className="instanceList">
+                        <li className="listHead">Meta Data</li>
+                        <li className="listItem">Name: {this.props.instance.metadata.name}</li>
+                        <li className="listItem">Instance ID: {this.props.instance.metadata.instanceId}</li>
+                        <li className="listHead">Location</li>
+                        <li className="listItem">Regio: </li>
+                        <li className="listItem">Omgeving: </li>
+                        <li className="listItem">Status: </li>
+                        <li className="listHead">Instance</li>
+                        <li className="listItem">Instance Type: </li>
+                        <li className="listItem">Runtime: </li>
+                        <li className="listItem">Availability Zone: </li>
+                        <li className="listHead">Status</li>
+                        <li className="listItem">Health: </li>
+                        <li className="listItem">Alarm: </li>
+                    </ul>
                 </div>
                 <div className="logs">
                     <h1>Log</h1>
@@ -50,9 +48,6 @@ export default class InstanceOverview extends React.Component {
                             <tr></tr>
                         </td>
                     </table>
-                </div>
-                <div>
-                   <button onClick={console.log("Button Clicked!!")}>Close Overview</button>
                 </div>
             </div>
         );

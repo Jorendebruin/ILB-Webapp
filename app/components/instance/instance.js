@@ -338,7 +338,9 @@ export default class Instance extends React.Component  {
         <Modal
           isOpen={this.state.modalIsOpen}
           contentLabel="Example Modal">
-          Sample modal
+         
+          <InstanceOverview instance={this.state.instance} />
+    
           <button onClick={() => this.closeModal() }>close</button>
         </Modal>
       </div>
