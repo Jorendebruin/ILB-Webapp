@@ -3,9 +3,9 @@ AWS EC2 controller
 
 ## Getting started
 
-- Clone this repo
-- Install dependencies (`npm install`)
-- Start app using (`gulp`)
+1. Clone this repo
+2. Install dependencies (`npm install`)
+3. Start app using (`gulp`)
 
 ## Testing
 Run `npm test`
