@@ -286,7 +286,7 @@ export default class Instance extends React.Component  {
     return (
       <div className={ `c-instance ${environment}` }>
         <span className={`o-websocket o-websocket--connection-state--${this.state.websocketConnecting}`}></span>
-        <header onClick={() => this.openModal()}>
+        <header> {/* onClick={() => this.openModal()} */}
           <h1>{this.state.instance.metadata.verbose}</h1>
           <span>{this.state.instance.metadata.name}</span>
         </header>
@@ -322,14 +322,15 @@ export default class Instance extends React.Component  {
           {buttonIcon} {buttonVerbose}
         </button>
 
-        <Modal
-          isOpen={this.state.modalIsOpen}
-          contentLabel="Example Modal">
 
-                <InstanceOverview currentInstance={this.state.instance} />
+        {/*         <Modal isOpen={this.state.modalIsOpen} contentLabel="Example Modal">
 
-                 <button onClick={() => this.closeModal() }>close</button>
-        </Modal>
+                        <InstanceOverview currentInstance={this.state.instance} />
+
+                         <button onClick={() => this.closeModal() }>close</button>
+                </Modal>*/}
+
+
       </div>
 
     )
