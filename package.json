@@ -4,10 +4,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --verbose",
+    "test:coverage": "jest --verbose --coverage"
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/testSetup.js"
+    "setupTestFrameworkScriptFile": "<rootDir>/jest.setup.js"
   },
   "keywords": [],
   "author": "",
