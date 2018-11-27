@@ -86,19 +86,20 @@ export default class InstanceOverview extends React.Component {
                           <ul className="instanceList">
                               <li className="listHead">Meta Data</li>
                               <br></br>
-                              <li className="listItem">Name: {this.props.currentInstance.metadata.name}</li>
-                              <li className="listItem">Instance ID: {this.props.currentInstance.metadata.instanceId}</li>
+                              <li className="listItem">Name<div className="liData">{this.props.currentInstance.metadata.name}</div></li>
+                              <li className="listItem">Instance ID<div className="liData">{this.props.currentInstance.metadata.instanceId}</div></li>
                               <br></br><br></br>
-                              <li className="listItem">Location: {this.props.currentInstance.location.branch} </li>
+                              <li className="listHead">Location</li>
                               <br></br>
-                              <li className="listItem">Environment: {environment} </li>
-                              <li className="listItem">Availability Zone: {this.props.currentInstance.location.availabilityZone} </li>
+                              <li className="listItem">Location<div className="liData">{this.props.currentInstance.location.branch}</div></li>
+                              <li className="listItem">Environment<div className="liData">{environment}</div></li>
+                              <li className="listItem">Availability Zone<div className="liData">{this.props.currentInstance.location.availabilityZone}</div></li>
                               <br></br><br></br>
-                              <li className="listItem">Status: {instanceStateVerbose} </li>
-
+                              <li className="listHead">Status</li>
                               <br></br>
-                              <li className="listItem">Health: {healthState} </li>
-                              <li className="listItem">Health checks: {healthChecks} </li>
+                              <li className="listItem">Status<div className="liData">{instanceStateVerbose}</div></li>
+                              <li className="listItem">Health<div className="liData">{healthState}</div></li>
+                              <li className="listItem">Health checks<div className="liData">{healthChecks}</div></li>
                           </ul>
                       </div>
                     </div>
