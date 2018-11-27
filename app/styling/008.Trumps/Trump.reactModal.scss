@@ -1,5 +1,10 @@
 .ReactModal__Overlay {
+
   &--after-open {
+    width: 80%;
+    max-height: 70%;
+    margin: auto;
+
     z-index: 999 !important;
-  }
+    }
 }

@@ -69,59 +69,74 @@ export default class InstanceOverview extends React.Component {
                 break;
         }
 
-        
         return (
+
             <div className="detailOverview">
-                <div className="regionBar">
-                    {this.props.currentInstance.metadata.name}
+              <div className="container">
+
+                <div className="row">
+                    <div className="regionBar">
+                        {this.props.currentInstance.metadata.name}
+                    </div>
                 </div>
-                <div className="dataOverview">
-                    <ul className="instanceList">
-                        <li className="listHead">Meta Data</li>
-                        <br></br>
-                        <li className="listItem">Name: {this.props.currentInstance.metadata.name}</li>
-                        <li className="listItem">Instance ID: {this.props.currentInstance.metadata.instanceId}</li>
-                        <br></br><br></br> 
-                        <li className="listItem">Location: {this.props.currentInstance.location.branch} </li>
-                        <br></br>
-                        <li className="listItem">Environment: {environment} </li>
-                        <li className="listItem">Availability Zone: {this.props.currentInstance.location.availabilityZone} </li>
-                        <br></br><br></br>
-                        <li className="listItem">Status: {instanceStateVerbose} </li>
-                        
-                        <br></br>
-                        <li className="listItem">Health: {healthState} </li>
-                        <li className="listItem">Health checks: {healthChecks} </li>
-                    </ul>
-                </div>
-                <div className="logs">
-                    <h1>Log</h1>
-                    <br></br>
-                    <table className="logTable">
-                        <tr>
-                            <th>Time</th>
-                            <th>Action</th>
-                            <th>User</th>
-                        </tr>
-                        <tr>
-                            <td>Midnight</td>
-                            <td>Stop Instance</td>
-                            <td>Henk</td>
-                        </tr>
-                        <tr>
-                            <td>Noon</td>
-                            <td>Start Instance</td>
-                            <td>Henk</td>
-                        </tr>
-                        <tr>
-                            <td>Mornin</td>
-                            <td>Stop Instance</td>
-                            <td>Henk</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            
+
+                <div className="row">
+                    <div className="col-1 card-metadata card-1">
+                      <div className="dataOverview">
+                          <ul className="instanceList">
+                              <li className="listHead">Meta Data</li>
+                              <br></br>
+                              <li className="listItem">Name: {this.props.currentInstance.metadata.name}</li>
+                              <li className="listItem">Instance ID: {this.props.currentInstance.metadata.instanceId}</li>
+                              <br></br><br></br>
+                              <li className="listItem">Location: {this.props.currentInstance.location.branch} </li>
+                              <br></br>
+                              <li className="listItem">Environment: {environment} </li>
+                              <li className="listItem">Availability Zone: {this.props.currentInstance.location.availabilityZone} </li>
+                              <br></br><br></br>
+                              <li className="listItem">Status: {instanceStateVerbose} </li>
+
+                              <br></br>
+                              <li className="listItem">Health: {healthState} </li>
+                              <li className="listItem">Health checks: {healthChecks} </li>
+                          </ul>
+                      </div>
+                    </div>
+
+                    <div className="col">
+                      <div className="logs">
+                          <h1>Log</h1>
+                          <br></br>
+                          <div className="card-logs card-1">
+                            <table className="logTable">
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                </tr>
+                                <tr>
+                                    <td>Midnight</td>
+                                    <td>Stop Instance</td>
+                                    <td>Henk</td>
+                                </tr>
+                                <tr>
+                                    <td>Noon</td>
+                                    <td>Start Instance</td>
+                                    <td>Henk</td>
+                                </tr>
+                                <tr>
+                                    <td>Mornin</td>
+                                    <td>Stop Instance</td>
+                                    <td>Henk</td>
+                                </tr>
+                            </table>
+                          </div>
+                      </div>
+                      </div>
+              </div>
+              </div>
+              </div>
+
         );
     }
 }
