@@ -328,7 +328,7 @@ export default class Instance extends React.Component  {
 
                 <InstanceOverview currentInstance={this.state.instance} />
 
-                {/* <button onClick={() => this.closeModal() }>close</button> */}
+                 <button onClick={() => this.closeModal() }>close</button>
         </Modal>
       </div>
 
