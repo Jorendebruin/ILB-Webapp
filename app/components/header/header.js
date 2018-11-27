@@ -24,9 +24,7 @@ export default class MainHeader extends React.Component {
   }
 
   toggleNightModus(state) {
-    this.setState({
-      nightModus: !state
-    });
+    this.setState({ nightModus: !state });
 
     // Toggle a class on the body so we can add styling
     var elem = document.getElementsByTagName('body')[0];
