@@ -12,7 +12,7 @@ export default class App extends React.Component {
     this.state = {
       children: props.children,
       showMenu: false,
-      isAuthenticated: false 
+      isAuthenticated: false
     }
   }
 
@@ -20,7 +20,6 @@ export default class App extends React.Component {
     try {
 
     AWS.config.update({
-<<<<<<< HEAD
         region: 'eu-west-1', // your region
         credentials: new AWS.CognitoIdentityCredentials({
           IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
@@ -29,7 +28,7 @@ export default class App extends React.Component {
           dynamodb: '2012-08-10'
         }
       });
-    
+
       await Auth.currentSession();
       this.userHasAuthenticated(true);
     }
@@ -38,7 +37,7 @@ export default class App extends React.Component {
         alert(e);
       }
     }
-  
+
    this.setState({ isAuthenticating: false });
   }
 
@@ -50,16 +49,6 @@ export default class App extends React.Component {
     await Auth.signOut();
     this.userHasAuthenticated(false);
     this.props.history.push("/login");
-=======
-      region: 'eu-west-1', // your region
-      credentials: new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
-      }),
-      apiVersions: {
-        dynamodb: '2012-08-10'
-      }
-    });
->>>>>>> 95af8e3ba058cd3a62998d2334f100daa9b84043
   }
 
   render() {
