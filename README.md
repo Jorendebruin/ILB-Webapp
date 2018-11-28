@@ -9,3 +9,6 @@ AWS EC2 controller
 
 ## Testing
 Run `npm test`
+
+### Generate coverage report
+Run `npm run test:coverage`
