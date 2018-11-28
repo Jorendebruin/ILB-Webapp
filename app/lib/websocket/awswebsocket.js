@@ -36,8 +36,9 @@ export default class AwsWebsocket {
       var signature = AWS.util.crypto.hmac(signingKey, stringToSign, 'hex');
 
       canonicalQuerystring += '&X-Amz-Signature=' + signature;
+      
       if (credentials.sessionToken) {
-          canonicalQuerystring += '&X-Amz-Security-Token=' + encodeURIComponent(credentials.sessionToken);
+        canonicalQuerystring += '&X-Amz-Security-Token=' + encodeURIComponent(credentials.sessionToken);
       }
 
       var requestUrl = protocol + '://' + host + uri + '?' + canonicalQuerystring;
