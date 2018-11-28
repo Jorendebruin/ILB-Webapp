@@ -1,0 +1,15 @@
+.o-websocket {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin: 8px;
+  background: map-get($states, inactive);
+
+  &--connection-state {
+    &--0 { background: map-get($states, inactive); }
+    &--1 { background: map-get($states, warning); }
+    &--2 { background: map-get($states, ok); }
+    &--3 { background: map-get($states, error); }
+  }
+}

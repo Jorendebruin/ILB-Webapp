@@ -9,25 +9,26 @@ var gulp = require('gulp'),
     concat = require('gulp-concat');
 
 var config = {
-  uri: 'http://localhost:3000',
+  uri: 'http://localhost',
   port: 3000,
   paths: {
     html: 'app/**/*.html',
     js: 'app/**/*.js',
-    main: 'app/main.js',
     sass: 'app/**/*.scss',
+    mainJs: 'app/main.js',
+    mainSass: 'app/style.scss',
     dist: 'dist'
   }
 };
 
 gulp.task('html', () => {
-  gulp.src(config.paths.html)
+  return gulp.src(config.paths.html)
     .pipe(gulp.dest(config.paths.dist))
     .pipe(connect.reload());
 });
 
 gulp.task('js', () => {
-  browserify(config.paths.main)
+  browserify(config.paths.mainJs)
     .transform(babelify, { presets: ["es2015", "react"] })
     .bundle()
     .on('error', console.error.bind(console))
@@ -37,7 +38,7 @@ gulp.task('js', () => {
 });
 
 gulp.task('sass', () => {
-  gulp.src(config.paths.sass)
+  return gulp.src(config.paths.mainSass)
     .pipe(sass().on('error', sass.logError))
     .pipe(concat('bundle.css'))
     .pipe(gulp.dest(config.paths.dist))
@@ -59,8 +60,10 @@ gulp.task('connect', () => {
 });
 
 gulp.task('open', ['connect'], () => {
-  gulp.src(config.paths.dist)
-    .pipe(open({uri: config.uri}));
+  return gulp.src(config.paths.dist)
+    .pipe(open({
+      uri: `${config.uri}:${config.port}`
+    }));
 });
 
 gulp.task('build', ['html', 'js', 'sass']);

@@ -1,27 +1,33 @@
 import React from 'react';
-import { Router, Link } from 'react-router';
+
+import AWS from 'aws-sdk/global';
+
+import MainHeader from '../header/header';
 
 export default class App extends React.Component {
-  
-  constructor() {
+
+  constructor(props) {
     super();
-    this.state = { showMenu: false }
+    this.state = {
+      children: props.children
+    }
   }
-  
+
+  componentDidMount() {
+    AWS.config.update({
+      region: 'eu-west-1', // your region
+      credentials: new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
+      })
+    });
+  }
+
   render() {
     return (
-      <div>
-        <a className="hamburger material-icons" onClick={() => this.setState({ showMenu: !this.state.showMenu })}>menu</a>
-        <nav className={this.state.showMenu ? 'active' : ''}>
-          <h1>App</h1>
-          <ul>
-            <li><Link to="/" activeClassName="active">Home</Link></li>
-            <li><Link to="about" activeClassName="active">About</Link></li>
-            <li><Link to="contact" activeClassName="active">Contact</Link></li>
-          </ul>
-        </nav>
+      <div className="wrapper">
+        <MainHeader></MainHeader>
         <main>
-          {this.props.children}
+          { this.state.children }
         </main>
       </div>
     );
