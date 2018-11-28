@@ -1,18 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, IndexRoute, hashHistory } from 'react-router';
-
+import { BrowserRouter as Router } from "react-router-dom";
+import Amplify from 'aws-amplify';
+import config from './lib/constants/config';
 import App from './components/app/app';
-import Home from './components/home/home';
-import About from './components/about/about';
-import Contact from './components/contact/contact';
+
+
+Amplify.configure({
+  Auth: {
+    mandatorySignIn: true,
+    region: config.cognito.REGION,
+    userPoolId: config.cognito.USER_POOL_ID,
+    identityPoolId: config.cognito.IDENTITY_POOL_ID,
+    userPoolWebClientId: config.cognito.APP_CLIENT_ID
+  }
+});
+
 
 ReactDOM.render((
-  <Router history={hashHistory}>
-    <Route component={App}>
-      <Route path="/" component={Home} />
-      <Route path="about" component={About} />
-      <Route path="contact" component={Contact} />
-    </Route>
+  <Router>
+    <App />
   </Router>
 ), document.getElementById('app'));
