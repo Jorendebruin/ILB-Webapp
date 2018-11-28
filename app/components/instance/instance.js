@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import AwsWebsocket from '../../lib/websocket/Awswebsocket';
 
-import AWS from 'aws-sdk/global';
+import AWS from 'aws-sdk';
 
 import {
   uuid
@@ -15,6 +15,10 @@ import {
   API_GATEWAY_DYNAMODB,
   IOT_HOST
 } from '../../lib/constants/endpoints';
+
+import {
+  DYNAMO_INSTANCE_LOGS
+} from '../../lib/constants/dynamoDbTableNames';
 
 import {
   MdPlace,
@@ -182,9 +186,29 @@ export default class Instance extends React.Component  {
       }
     })
     .then((response) => {
+      this.logAction(state == 16 ? 'stop' : 'start');
     })
     .catch((error) => {
       console.log('error', error);
+    });
+  }
+
+  logAction(action) {
+    const dynamoDB = new AWS.DynamoDB();
+
+    var params = {
+      TableName: DYNAMO_INSTANCE_LOGS,
+      Item: {
+        'uuid': { S: uuid() },
+        'timestamp': { S: new Date().toString() },
+        'instance': { S: this.state.instance.metadata.instanceId },
+        'user': { S: 'Test user' },
+        'action': { S: action }
+      }
+    };
+
+    dynamoDB.putItem(params, (error, data) => {
+      if(error) console.log(`DynamoDB error: ${error}`);
     });
   }
 
