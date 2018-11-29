@@ -286,7 +286,7 @@ export default class Home extends React.Component {
     });
     
     return (
-      <div >
+      
       <div className="homePage row"  id="main">
         <section className="col-xs-9 c-scrollable">
           <section className="row">
@@ -315,7 +315,7 @@ export default class Home extends React.Component {
           { filters }
         </aside>
       </div>
-      </div>
+      
     );
   }
   
