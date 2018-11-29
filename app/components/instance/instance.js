@@ -29,7 +29,8 @@ import {
   MdPause,
   MdStop,
   MdGroupWork,
-  MdNotifications
+  MdNotifications,
+  MdClose
 } from 'react-icons/md';
 
 export default class Instance extends React.Component  {
@@ -323,8 +324,9 @@ export default class Instance extends React.Component  {
         </button>
 
         <Modal isOpen={this.state.modalIsOpen} contentLabel="Example Modal">
-                        <InstanceOverview currentInstance={this.state.instance} />
-                         <button onClick={() => this.closeModal() }>close</button>
+                <MdClose className="modal_icon_close" onClick={() => this.closeModal()} />
+                <InstanceOverview currentInstance={this.state.instance} />
+                
                 </Modal>
 
       </div>
