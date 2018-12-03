@@ -33,8 +33,7 @@ import {
   MdPause,
   MdStop,
   MdGroupWork,
-  MdNotifications,
-  MdClose
+  MdNotifications
 } from 'react-icons/md';
 
 export default class Instance extends React.Component  {
@@ -59,7 +58,7 @@ export default class Instance extends React.Component  {
     this.setState({polltimer: pollTimer});
 
     this.connectToWebSocket();
-    Modal.setAppElement('#app');
+    Modal.setAppElement('body');
   }
 
   componentWillUnmount() {

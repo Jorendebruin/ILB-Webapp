@@ -34,21 +34,22 @@ export default class App extends React.Component {
     }
     catch(e) {
       if (e !== 'No current user') {
-        alert(e);
+        console.warning(e);
       }
     }
 
    this.setState({ isAuthenticating: false });
   }
 
+  /* istanbul ignore next line */
   userHasAuthenticated = authenticated => {
     this.setState({ isAuthenticated: authenticated });
   }
 
+  /* istanbul ignore next line */
   handleLogoutevent = async event => {
     await Auth.signOut();
     this.userHasAuthenticated(false);
-    this.props.history.push("/login");
   }
 
   render() {

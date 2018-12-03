@@ -21,8 +21,6 @@ export default class InstanceOverview extends React.Component {
     }
 
     render() {
-      console.log(this.props.currentInstance);
-
         var environment;
         switch (this.props.currentInstance.location.environment) {
             case 1:

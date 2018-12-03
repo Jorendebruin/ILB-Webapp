@@ -14,11 +14,20 @@ AWS.config.update({
 });
 
 describe("Generate correct socket url", () => {
-  it("should generate a signed url", () => {
+  it("should generate a signed url without a session token", () => {
     const signedUrl = new AwsWebsocket().getSignedUrl(IOT_HOST, AWS.config.region, AWS.config.credentials);
 
     expect(signedUrl).toMatch(new RegExp(IOT_HOST));
     expect(signedUrl).toMatch(new RegExp(AWS.config.region));
+  });
+
+  it("should generate a signed url with a session token", () => {
+    AWS.config.credentials.sessionToken = 'testsessiontoken';
+    const signedUrl = new AwsWebsocket().getSignedUrl(IOT_HOST, AWS.config.region, AWS.config.credentials);
+
+    expect(signedUrl).toMatch(new RegExp(IOT_HOST));
+    expect(signedUrl).toMatch(new RegExp(AWS.config.region));
+    expect(signedUrl).toMatch(new RegExp('&X-Amz-Security-Token='));
   });
 
   it("should generate a signature key", () => {
