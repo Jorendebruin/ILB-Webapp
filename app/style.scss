@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900');
 
 /*-------------------------
     001 Settings
@@ -31,6 +31,8 @@
   005 Objects
 -------------------------*/
 @import "./styling/005.Objects/Object.websocket.scss";
+@import "./styling/005.Objects/Object.card.scss";
+@import "./styling/005.Objects/Object.table.scss";
 
 /*-------------------------
   006 Components
@@ -45,6 +47,7 @@
 /*-------------------------
   008 Trumps
 -------------------------*/
+@import "./styling/008.Trumps/Trump.reactModal.scss";
 
 /*-------------------------
   Component level styling
@@ -53,17 +56,18 @@
 @import "./components/header/header.scss";
 @import "./components/instance/instance.scss";
 @import "./components/empty-state/empty-state.scss";
+@import "./components/instance/instanceOverview.scss";
 
-#app {
-  .wrapper {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    main {
-      flex-grow: 1;
+body {
+  // overflow: hidden;
+  #app {
+    .wrapper {
+      height: 100vh;
       display: flex;
-      > .row {
-        flex-grow: 1;
+      flex-direction: column;
+
+      > :not(header).row {
+        height: inherit;
       }
     }
   }
