@@ -23,6 +23,7 @@ export default class InstanceOverview extends React.Component {
   }
 
   editAliasInstance() {
+       document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
 	     document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
   }
 
@@ -32,6 +33,7 @@ export default class InstanceOverview extends React.Component {
   	var instanceAliasTemp = this.state.value;
 
     // Hide input element
+    document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
     document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
 
   	axios.post( Alias_gateway_url,
@@ -117,8 +119,12 @@ export default class InstanceOverview extends React.Component {
         return (
           <article className="c-instanceOverview">
             <header>
-              <h1>
-                { this.props.currentInstance.metadata.name }
+            <div id={"inputAlias_" + this.props.currentInstance.metadata.instanceId} hidden>
+              <input type='text' id='userInput' defaultValue={this.props.currentInstance.metadata.verbose} onChange={this.handleChange} />
+              <input type='button' onClick={() => this.postAliasInstance() } value='Save'/>
+            </div>
+              <h1 id={"aliasElement_" + this.props.currentInstance.metadata.instanceId}>
+                { this.props.currentInstance.metadata.verbose }<div className="editAliasButton"><MdEdit onClick={() => this.editAliasInstance()} /></div>
               </h1>
               <MdClose onClick={() => this.close() }/>
             </header>

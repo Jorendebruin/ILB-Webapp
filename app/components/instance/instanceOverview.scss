@@ -23,6 +23,15 @@
       &:hover {
         cursor: pointer;
       }
+
+    .editAliasButton {
+      display: inline-block !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      height: 10px !important;
+      width: 10px !important;
+      }
     }
   }
 
