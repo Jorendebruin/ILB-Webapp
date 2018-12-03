@@ -7,7 +7,7 @@ import axios from 'axios';
 
 import AwsWebsocket from '../../lib/websocket/Awswebsocket';
 
-import AWS from 'aws-sdk/global';
+import AWS from 'aws-sdk';
 
 import {
   uuid
@@ -18,6 +18,10 @@ import {
   API_GATEWAY_DYNAMODB,
   IOT_HOST
 } from '../../lib/constants/endpoints';
+
+import {
+  DYNAMO_INSTANCE_LOGS
+} from '../../lib/constants/dynamoDbTableNames';
 
 import {
   MdPlace,
@@ -188,6 +192,7 @@ export default class Instance extends React.Component  {
       }
     })
     .then((response) => {
+      this.logAction(state == 16 ? 'stop' : 'start');
     })
     .catch((error) => {
       console.log('error', error);
@@ -209,8 +214,28 @@ export default class Instance extends React.Component  {
   openModal() {
     this.setState({modalIsOpen: true});
   }
+
   closeModal() {
     this.setState({modalIsOpen: false});
+  }
+
+  logAction(action) {
+    const dynamoDB = new AWS.DynamoDB();
+
+    var params = {
+      TableName: DYNAMO_INSTANCE_LOGS,
+      Item: {
+        'uuid': { S: uuid() },
+        'timestamp': { S: new Date().toString() },
+        'instance': { S: this.state.instance.metadata.instanceId },
+        'user': { S: 'Test user' },
+        'action': { S: action }
+      }
+    };
+
+    dynamoDB.putItem(params, (error, data) => {
+      if(error) console.log(`DynamoDB error: ${error}`);
+    });
   }
 
   render() {
@@ -324,10 +349,8 @@ export default class Instance extends React.Component  {
         </button>
 
         <Modal isOpen={this.state.modalIsOpen} contentLabel="Example Modal">
-                <MdClose className="modal_icon_close" onClick={() => this.closeModal()} />
-                <InstanceOverview currentInstance={this.state.instance} />
-
-                </Modal>
+          <InstanceOverview currentInstance={this.state.instance} closeModal={() => this.closeModal() } />
+        </Modal>
 
       </div>
 
