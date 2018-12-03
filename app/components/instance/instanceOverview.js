@@ -169,9 +169,11 @@ export default class InstanceOverview extends React.Component {
                 </h2>
                 <table className="o-table">
                   <thead>
-                    <td>Time</td>
-                    <td>Action</td>
-                    <td>By</td>
+                    <tr>
+                      <th>Time</th>
+                      <th>Action</th>
+                      <th>By</th>
+                    </tr>
                   </thead>
                 </table>
               </section>

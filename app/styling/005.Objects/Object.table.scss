@@ -6,9 +6,12 @@
   thead {
     background: map-get($colors, orange);
 
-    td {
-      padding: 16px;
-      font-weight: 600;
+    tr {
+      th {
+        padding: 12px 8px;
+        font-weight: 500;
+        text-align: left;
+      }
     }
   }
 }
