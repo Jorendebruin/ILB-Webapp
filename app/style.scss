@@ -54,16 +54,16 @@
 @import "./components/instance/instance.scss";
 @import "./components/empty-state/empty-state.scss";
 
-#app {
-  .wrapper {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    > div {
-      flex-grow: 1;
+body {
+  // overflow: hidden;
+  #app {
+    .wrapper {
+      height: 100vh;
       display: flex;
-      > .row {
-        flex-grow: 1;
+      flex-direction: column;
+
+      > :not(header).row {
+        height: inherit;
       }
     }
   }

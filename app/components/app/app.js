@@ -59,9 +59,6 @@ export default class App extends React.Component {
     return (
       <div className="wrapper">
         <MainHeader></MainHeader>
-        <main>
-          { this.state.children }
-        </main>
         <Routes childProps={childProps} />
       </div>
     );

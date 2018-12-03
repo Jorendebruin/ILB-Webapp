@@ -30,6 +30,11 @@
       font-size: 1.5em;
       margin: 0;
     }
+
+    .scroll-overflow {
+      padding: 0;
+      height: calc(100% - (61px + 68px));
+    }
   }
 
   .c-sidebar {
