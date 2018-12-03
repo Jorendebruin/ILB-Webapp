@@ -29,7 +29,7 @@ gulp.task('html', () => {
 
 gulp.task('js', () => {
   browserify(config.paths.mainJs)
-    .transform(babelify, { presets: ["es2015", "react"] })
+    .transform(babelify, { presets: ["es2015", "react"], plugins: ["transform-object-rest-spread", "transform-class-properties", "transform-runtime"] })
     .bundle()
     .on('error', console.error.bind(console))
     .pipe(source('bundle.js'))
