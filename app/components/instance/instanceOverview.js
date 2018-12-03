@@ -33,8 +33,8 @@ export default class InstanceOverview extends React.Component {
   	var instanceAliasTemp = this.state.value;
 
     // Hide input element
+     document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
     document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
-    document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.height = "none";
 
   	axios.post( Alias_gateway_url,
     {
