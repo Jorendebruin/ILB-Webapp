@@ -119,10 +119,10 @@ export default class InstanceOverview extends React.Component {
         return (
           <article className="c-instanceOverview">
             <header>
-            <div id={"inputAlias_" + this.props.currentInstance.metadata.instanceId} hidden>
-              <input type='text' id='userInput' defaultValue={this.props.currentInstance.metadata.verbose} onChange={this.handleChange} />
-              <input type='button' onClick={() => this.postAliasInstance() } value='Save'/>
-            </div>
+              <div id={"inputAlias_" + this.props.currentInstance.metadata.instanceId} className="input" hidden>
+                <input type='text' id='userInput' defaultValue={this.props.currentInstance.metadata.verbose} onChange={this.handleChange} />
+                <input type='button' onClick={() => this.postAliasInstance() } value='Save'/>
+              </div>
               <h1 id={"aliasElement_" + this.props.currentInstance.metadata.instanceId}>
                 { this.props.currentInstance.metadata.verbose }<div className="editAliasButton"><MdEdit onClick={() => this.editAliasInstance()} /></div>
               </h1>
