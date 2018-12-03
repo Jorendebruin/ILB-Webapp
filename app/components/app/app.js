@@ -12,7 +12,8 @@ export default class App extends React.Component {
     this.state = {
       children: props.children,
       showMenu: false,
-      isAuthenticated: false
+      isAuthenticated: false,
+      username: ""
     }
   }
 
@@ -45,6 +46,10 @@ export default class App extends React.Component {
     this.setState({ isAuthenticated: authenticated });
   }
 
+  setUserName = currentUser => {
+    this.setState({ username: currentUser})
+  }
+
   handleLogoutevent = async event => {
     await Auth.signOut();
     this.userHasAuthenticated(false);
@@ -54,7 +59,9 @@ export default class App extends React.Component {
   render() {
     const childProps = {
       isAuthenticated: this.state.isAuthenticated,
-      userHasAuthenticated: this.userHasAuthenticated
+      userHasAuthenticated: this.userHasAuthenticated,
+      username: this.state.username,
+      setUserName: this.setUserName
     };
     return (
       <div className="wrapper">

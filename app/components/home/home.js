@@ -34,6 +34,7 @@ export default class Home extends React.Component {
       fetchedInstances: false,
       instances: [],
       sortBy: null,
+      username: '',
       searchFilter: '',
       filters: [
         {
@@ -220,7 +221,7 @@ export default class Home extends React.Component {
     // Put all the instances we are left with in some HTML
     var htmlFormattedInstances = instances.map((instance) => {
       return <div className="col-xs-12 col-md-4 col-lg-3 col-xl-2" key={instance.metadata.instanceId}>
-        <Instance instance={instance}></Instance>
+        <Instance instance={instance} username={this.props.username}></Instance>
       </div>;
     });
 
