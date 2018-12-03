@@ -24,7 +24,6 @@ import {
 } from 'react-icons/md';
 
 import Instance from '../instance/instance';
-
 import EmptyState from '../empty-state/empty-state';
 
 export default class Home extends React.Component {
@@ -285,9 +284,10 @@ export default class Home extends React.Component {
         </ul>
       </section>
     });
-
+    
     return (
-      <div className="homePage row">
+      
+      <div className="homePage row"  id="main">
         <section className="col-xs-9 c-scrollable">
           <section className="row">
             <div className="col-xs-12">
@@ -315,6 +315,8 @@ export default class Home extends React.Component {
           { filters }
         </aside>
       </div>
+      
     );
   }
+  
 }

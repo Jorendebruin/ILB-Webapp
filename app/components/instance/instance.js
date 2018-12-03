@@ -1,4 +1,7 @@
 import React from 'react';
+import InstanceOverview from './instanceOverview';
+import ReactDOM from 'react-dom';
+import Modal from 'react-modal';
 
 import axios from 'axios';
 
@@ -30,7 +33,8 @@ import {
   MdPause,
   MdStop,
   MdGroupWork,
-  MdNotifications
+  MdNotifications,
+  MdClose
 } from 'react-icons/md';
 
 export default class Instance extends React.Component  {
@@ -38,6 +42,7 @@ export default class Instance extends React.Component  {
     super();
     this.state = {
       instance: props.instance,
+      modalIsOpen: false,
       websocketConnecting: 0 // 0: inactive, 1: starting, 2: connected, 3: error
     }
   }
@@ -54,9 +59,10 @@ export default class Instance extends React.Component  {
     this.setState({polltimer: pollTimer});
 
     this.connectToWebSocket();
+    Modal.setAppElement('#app');
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearInterval(this.state.pollTimer);
   }
 
@@ -175,7 +181,7 @@ export default class Instance extends React.Component  {
     var state = this.state.instance.instance.state;
 
     // You can only toggle the state when it's either running (16) or stopped (80)
-    if(state != 16 && state != 80) return;
+    if (state != 16 && state != 80) return;
 
     this.state.instance.instance.state = state == 16 ? 64 : 0;
     this.updateInstance();
@@ -191,6 +197,26 @@ export default class Instance extends React.Component  {
     .catch((error) => {
       console.log('error', error);
     });
+
+    console.log(String(this.state.instance.metadata.instanceId));
+    console.log("getInstanceOverview End...");
+
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.showOverview !== this.props.showOverview) {
+      this.state.showOverview ?
+        ReactDOM.render(<InstanceOverview instance={this.state.instance} closeOverview={this.toggleInstanceOverview.bind(this)} />, document.getElementById('main'))
+        : null
+    }
+  }
+
+  openModal() {
+    this.setState({modalIsOpen: true});
+  }
+
+  closeModal() {
+    this.setState({modalIsOpen: false});
   }
 
   logAction(action) {
@@ -249,7 +275,7 @@ export default class Instance extends React.Component  {
     var runTime = {
       hours: timeDiff.getHours(),
       minutes: timeDiff.getMinutes()
-    };
+      };
 
     var buttonIcon = <MdSync className="loading" />;
     var buttonVerbose = 'Wating for response';
@@ -281,32 +307,17 @@ export default class Instance extends React.Component  {
         break;
     }
 
-    var healthChecks;
-    var healthState;
-    switch (this.state.instance.status.health.state) {
-      case 0:
-        healthChecks = '-';
-        healthState = 'inactive';
-        break;
-      case 1:
-        healthChecks = 'Initializing';
-        healthState = 'warning';
-        break;
-      case 2:
-        healthChecks = `${this.state.instance.status.health.passed}/${this.state.instance.status.health.amount}`;
-        healthState = this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'error' : 'ok';
-        break;
-    }
+    var { healthState, healthChecks } = this.getHealthStateAndChecks();
 
     return (
       <div className={ `c-instance ${environment}` }>
         <span className={`o-websocket o-websocket--connection-state--${this.state.websocketConnecting}`}></span>
-        <header>
+        <header onClick={() => this.openModal()}>
           <h1>{this.state.instance.metadata.verbose}</h1>
           <span>{this.state.instance.metadata.name}</span>
         </header>
 
-        <ul className="row">
+        <ul className="row" onClick={() => this.toggleInstanceOverview()}>
           <li className="col-xs-6">
             <MdPlace />
             {this.state.instance.location.branch}
@@ -329,14 +340,41 @@ export default class Instance extends React.Component  {
           </li>
           <li className={`col-xs-6 ${this.state.instance.instance.state != 16 ? 'state--inactive': ''}`}>
             <MdWatchLater />
-            { this.state.instance.instance.state == 16 ? runTime.hours+'h '+runTime.minutes+'m' : '-'}
+            {this.state.instance.instance.state == 16 ? runTime.hours + 'h ' + runTime.minutes + 'm' : '-'}
           </li>
         </ul>
 
         <button disabled={buttonDisabled} onClick={() => this.toggleInstanceState() }>
           {buttonIcon} {buttonVerbose}
         </button>
+
+        <Modal isOpen={this.state.modalIsOpen} contentLabel="Example Modal">
+          <InstanceOverview currentInstance={this.state.instance} closeModal={() => this.closeModal() } />
+        </Modal>
+
       </div>
+
     )
   }
+
+
+    getHealthStateAndChecks() {
+        var healthChecks;
+        var healthState;
+        switch (this.state.instance.status.health.state) {
+            case 0:
+                healthChecks = '-';
+                healthState = 'inactive';
+                break;
+            case 1:
+                healthChecks = 'Initializing';
+                healthState = 'warning';
+                break;
+            case 2:
+                healthChecks = `${this.state.instance.status.health.passed}/${this.state.instance.status.health.amount}`;
+                healthState = this.state.instance.status.health.passed < this.state.instance.status.health.amount ? 'error' : 'ok';
+                break;
+        }
+        return { healthState, healthChecks };
+    }
 }
