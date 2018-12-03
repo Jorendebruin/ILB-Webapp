@@ -1,6 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import {
+  MdClose
+} from 'react-icons/md';
+
 
 export default class InstanceOverview extends React.Component {
 
@@ -12,7 +16,12 @@ export default class InstanceOverview extends React.Component {
         ReactDOM.unmountComponentAtNode(this.container);
     }
 
+    close() {
+      this.props.closeModal();
+    }
+
     render() {
+      console.log(this.props.currentInstance);
 
         var environment;
         switch (this.props.currentInstance.location.environment) {
@@ -70,74 +79,104 @@ export default class InstanceOverview extends React.Component {
         }
 
         return (
-
-            <div className="detailOverview">
-              <div className="container">
-
-                <div className="row">
-                    <div className="regionBar">
-                        {this.props.currentInstance.metadata.name}
-                    </div>
+          <article className="c-instanceOverview">
+            <header>
+              <h1>
+                { this.props.currentInstance.metadata.name }
+              </h1>
+              <MdClose onClick={() => this.close() }/>
+            </header>
+            <section className="row">
+              <section className="col-xs-4">
+                <div className="o-card">
+                  <div className="o-card__content">
+                    <h2>
+                      Metadata
+                    </h2>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>Name</td>
+                          <td>{this.props.currentInstance.metadata.name}</td>
+                        </tr>
+                        <tr>
+                          <td>Instance ID</td>
+                          <td>{this.props.currentInstance.metadata.instanceId}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <h2>
+                      Location
+                    </h2>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>Branch</td>
+                          <td>{this.props.currentInstance.location.branch}</td>
+                        </tr>
+                        <tr>
+                          <td>Environment</td>
+                          <td>{environment}</td>
+                        </tr>
+                        <tr>
+                          <td>Availability Zone</td>
+                          <td>{this.props.currentInstance.location.availabilityZone}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <h2>
+                      Instance
+                    </h2>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>Branch</td>
+                          <td>{this.props.currentInstance.instance.startuptime}</td>
+                        </tr>
+                        <tr>
+                          <td>State</td>
+                          <td>{this.props.currentInstance.instance.state}</td>
+                        </tr>
+                        <tr>
+                          <td>Type</td>
+                          <td>{this.props.currentInstance.instance.type}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <h2>
+                      Status
+                    </h2>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>Alarm</td>
+                          <td>{this.props.currentInstance.status.alarm}</td>
+                        </tr>
+                        <tr>
+                          <td>Health</td>
+                          <td>
+                            {this.props.currentInstance.status.health.passed}/{this.props.currentInstance.status.health.amount}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-
-                <div className="row">
-                    <div className="col-1 card-metadata card-1">
-                      <div className="dataOverview">
-                          <ul className="instanceList">
-                              <li className="listHead">Meta Data</li>
-                              <br></br>
-                              <li className="listItem">Name<div className="liData">{this.props.currentInstance.metadata.name}</div></li>
-                              <li className="listItem">Instance ID<div className="liData">{this.props.currentInstance.metadata.instanceId}</div></li>
-                              <br></br><br></br>
-                              <li className="listHead">Location</li>
-                              <br></br>
-                              <li className="listItem">Location<div className="liData">{this.props.currentInstance.location.branch}</div></li>
-                              <li className="listItem">Environment<div className="liData">{environment}</div></li>
-                              <li className="listItem">Availability Zone<div className="liData">{this.props.currentInstance.location.availabilityZone}</div></li>
-                              <br></br><br></br>
-                              <li className="listHead">Status</li>
-                              <br></br>
-                              <li className="listItem">Status<div className="liData">{instanceStateVerbose}</div></li>
-                              <li className="listItem">Health<div className="liData">{healthState}</div></li>
-                              <li className="listItem">Health checks<div className="liData">{healthChecks}</div></li>
-                          </ul>
-                      </div>
-                    </div>
-
-                    <div className="col">
-                      <div className="logs">
-                          <h1>Log</h1>
-                          <br></br>
-                          <div className="card-logs card-1">
-                            <table className="logTable">
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Action</th>
-                                    <th>User</th>
-                                </tr>
-                                <tr>
-                                    <td>Midnight</td>
-                                    <td>Stop Instance</td>
-                                    <td>Henk</td>
-                                </tr>
-                                <tr>
-                                    <td>Noon</td>
-                                    <td>Start Instance</td>
-                                    <td>Henk</td>
-                                </tr>
-                                <tr>
-                                    <td>Mornin</td>
-                                    <td>Stop Instance</td>
-                                    <td>Henk</td>
-                                </tr>
-                            </table>
-                          </div>
-                      </div>
-                      </div>
-              </div>
-              </div>
-              </div>
-
+              </section>
+              <section className="col-xs-8">
+                <h2>
+                  Logs
+                </h2>
+                <table className="o-table">
+                  <thead>
+                    <td>Time</td>
+                    <td>Action</td>
+                    <td>By</td>
+                  </thead>
+                </table>
+              </section>
+            </section>
+          </article>
         );
     }
 }

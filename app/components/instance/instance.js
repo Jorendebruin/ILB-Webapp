@@ -209,6 +209,7 @@ export default class Instance extends React.Component  {
   openModal() {
     this.setState({modalIsOpen: true});
   }
+
   closeModal() {
     this.setState({modalIsOpen: false});
   }
@@ -324,10 +325,8 @@ export default class Instance extends React.Component  {
         </button>
 
         <Modal isOpen={this.state.modalIsOpen} contentLabel="Example Modal">
-                <MdClose className="modal_icon_close" onClick={() => this.closeModal()} />
-                <InstanceOverview currentInstance={this.state.instance} />
-                
-                </Modal>
+          <InstanceOverview currentInstance={this.state.instance} closeModal={() => this.closeModal() } />
+        </Modal>
 
       </div>
 

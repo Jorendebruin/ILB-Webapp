@@ -1,0 +1,14 @@
+.o-table {
+  @extend .o-card;
+  width: 100%;
+  border-spacing: 0;
+
+  thead {
+    background: map-get($colors, orange);
+
+    td {
+      padding: 16px;
+      font-weight: 600;
+    }
+  }
+}
