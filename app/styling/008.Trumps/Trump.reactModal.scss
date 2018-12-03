@@ -1,14 +1,15 @@
 .ReactModal__Overlay {
 
     &--after-open {
-        width: 80%;
-        max-height: 72%;
+        width: 70%;
+        max-height: 700px;
         margin: auto;
         z-index: 999 !important;
     }
 
     .modal_icon_close {
         position: relative;
-        left: 98.9%;
+        top: 70px;
+        left: 98%;
     }
 }

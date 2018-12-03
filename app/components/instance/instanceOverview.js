@@ -23,7 +23,6 @@ export default class InstanceOverview extends React.Component {
   }
 
   editAliasInstance() {
-	/*     document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "none"; */
 	     document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
   }
 
@@ -32,7 +31,7 @@ export default class InstanceOverview extends React.Component {
   	var instanceIdTemp = this.props.currentInstance.metadata.instanceId;
   	var instanceAliasTemp = this.state.value;
 
-  	/* document.getElementById("aliasElement_" + this.state.instance.metadata.instanceId).style.display = "inherit";	*/
+    // Hide input element
     document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
 
   	axios.post( Alias_gateway_url,
@@ -116,7 +115,7 @@ export default class InstanceOverview extends React.Component {
               <div className="container">
 
                 <div className="row">
-                    <div className="regionBar">{this.props.currentInstance.metadata.verbose}<MdEdit onClick={() => this.editAliasInstance()} />
+                    <div className="regionBar">{this.props.currentInstance.metadata.verbose}<div className="editAliasButton"><MdEdit onClick={() => this.editAliasInstance()} /></div>
                         <div id={"inputAlias_" + this.props.currentInstance.metadata.instanceId} hidden>
                           <input type='text' id='userInput' defaultValue={this.props.currentInstance.metadata.verbose} onChange={this.handleChange} />
                           <input type='button' onClick={() => this.postAliasInstance() } value='Save'/>
@@ -132,13 +131,13 @@ export default class InstanceOverview extends React.Component {
                               <br></br>
                               <li className="listItem">Name<div className="liData">{this.props.currentInstance.metadata.name}</div></li>
                               <li className="listItem">Instance ID<div className="liData">{this.props.currentInstance.metadata.instanceId}</div></li>
-                              <br></br><br></br>
+                              <br></br>
                               <li className="listHead">Location</li>
                               <br></br>
                               <li className="listItem">Location<div className="liData">{this.props.currentInstance.location.branch}</div></li>
                               <li className="listItem">Environment<div className="liData">{environment}</div></li>
                               <li className="listItem">Availability Zone<div className="liData">{this.props.currentInstance.location.availabilityZone}</div></li>
-                              <br></br><br></br>
+                              <br></br>
                               <li className="listHead">Status</li>
                               <br></br>
                               <li className="listItem">Status<div className="liData">{instanceStateVerbose}</div></li>

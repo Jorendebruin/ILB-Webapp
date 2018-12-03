@@ -24,6 +24,11 @@
       box-shadow: 0 3px 6px rgba(0,0,0,0.18), 0 3px 6px rgba(0,0,0,0.18), 0px 0px 12px rgba(0,0,0,.20);
     }
 
+    .editAliasButton {
+      display: inline-block;
+      float: right;
+    }
+
     header {
         text-align: center;
     }
@@ -77,6 +82,7 @@
     .listItem {
         font-size: 0.9em;
         margin-left: -10%;
+        margin-top: 6px;
         text-decoration-color: black;
         color: black;
     }
