@@ -22,7 +22,33 @@ export default class InstanceOverview extends React.Component {
     this.setState({value: event.target.value});
   }
 
+  editAliasInstance() {
+       document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
+       document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
+  }
 
+  postAliasInstance() {
+  	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/";
+  	var instanceIdTemp = this.props.currentInstance.metadata.instanceId;
+  	var instanceAliasTemp = this.state.value;
+
+    // Hide input element
+    document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
+    document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.height = "none";
+
+  	axios.post( Alias_gateway_url,
+    {
+  		InstanceId: instanceIdTemp,
+  		InstanceAlias: instanceAliasTemp
+    })
+  	.then((response) => {
+  		this.props.currentInstance.metadata.verbose = instanceAliasTemp;
+      this.setState({ alias: instanceAliasTemp });
+  	})
+  	.catch((error) => {
+  	  console.log('Alias POST error: ', error);
+  	});
+  }
 
     unmount() {
         ReactDOM.unmountComponentAtNode(this.container);
@@ -93,7 +119,13 @@ export default class InstanceOverview extends React.Component {
         return (
           <article className="c-instanceOverview">
             <header>
-              <h1 id={"aliasElement_" + this.props.currentInstance.metadata.instanceId}>{ this.props.currentInstance.metadata.verbose }</h1>
+              <div id={"inputAlias_" + this.props.currentInstance.metadata.instanceId} className="input" hidden>
+                <input type='text' id='userInput' defaultValue={this.props.currentInstance.metadata.verbose} onChange={this.handleChange} />
+                <input type='button' onClick={() => this.postAliasInstance() } value='Save'/>
+              </div>
+              <h1 id={"aliasElement_" + this.props.currentInstance.metadata.instanceId}>{ this.props.currentInstance.metadata.verbose }
+              <MdEdit onClick={() => this.editAliasInstance()} />
+              </h1>
               <MdClose onClick={() => this.close() }/>
             </header>
             <section className="row">
