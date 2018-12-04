@@ -24,7 +24,6 @@ import {
 } from 'react-icons/md';
 
 import Instance from '../instance/instance';
-
 import EmptyState from '../empty-state/empty-state';
 
 export default class Home extends React.Component {
@@ -35,6 +34,7 @@ export default class Home extends React.Component {
       fetchedInstances: false,
       instances: [],
       sortBy: null,
+      username: '',
       searchFilter: '',
       filters: [
         {
@@ -221,7 +221,7 @@ export default class Home extends React.Component {
     // Put all the instances we are left with in some HTML
     var htmlFormattedInstances = instances.map((instance) => {
       return <div className="col-xs-12 col-md-4 col-lg-3 col-xl-2" key={instance.metadata.instanceId}>
-        <Instance instance={instance}></Instance>
+        <Instance instance={instance} username={this.props.username}></Instance>
       </div>;
     });
 
@@ -285,26 +285,24 @@ export default class Home extends React.Component {
         </ul>
       </section>
     });
-
+    
     return (
       <div className="homePage row">
-        <section className="col-xs-9 c-scrollable">
-          <section className="row">
-            <div className="col-xs-12">
-              <div className="search">
-                <MdSearch />
-                <input
-                  placeholder="Zoeken op locatie, availability zone, alias, name"
-                  value={this.state.searchFilter}
-                  onChange={this.updateSearchFilter.bind(this)}>
-                </input>
-              </div>
+        <section className="col-xs-9 row c-scrollable">
+          <div className="col-xs-12">
+            <div className="search">
+              <MdSearch />
+              <input
+                placeholder="Zoeken op locatie, availability zone, alias, name"
+                value={this.state.searchFilter}
+                onChange={this.updateSearchFilter.bind(this)}>
+              </input>
             </div>
-            <h1 className="title col-xs-12">
-              Instances ({instances.length})
-            </h1>
-          </section>
-          <section className="row scroll-overflow">
+          </div>
+          <h1 className="title col-xs-12">
+            Instances ({instances.length})
+          </h1>
+          <section className="col-xs-12 row scroll-overflow">
             { !this.state.fetchedInstances ? <EmptyState title="Loading" subtitle="Getting instances from AWS"></EmptyState> : null }
             { this.state.fetchedInstances && htmlFormattedInstances.length == 0 ? <EmptyState title="Much empty" subtitle="No instances found with current filters"></EmptyState> : null }
             { htmlFormattedInstances }
@@ -315,6 +313,8 @@ export default class Home extends React.Component {
           { filters }
         </aside>
       </div>
+      
     );
   }
+  
 }
