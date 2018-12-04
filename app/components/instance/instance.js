@@ -42,6 +42,7 @@ export default class Instance extends React.Component  {
     super();
     this.state = {
       instance: props.instance,
+      username: props.username,
       modalIsOpen: false,
       websocketConnecting: 0 // 0: inactive, 1: starting, 2: connected, 3: error
     }
@@ -228,7 +229,7 @@ export default class Instance extends React.Component  {
         'uuid': { S: uuid() },
         'timestamp': { S: new Date().toString() },
         'instance': { S: this.state.instance.metadata.instanceId },
-        'user': { S: 'Test user' },
+        'user': { S: this.props.username },
         'action': { S: action }
       }
     };
