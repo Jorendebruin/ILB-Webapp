@@ -130,9 +130,7 @@ export default class InstanceOverview extends React.Component {
               <h1 id={"aliasElement_" + this.props.currentInstance.metadata.instanceId}>{ this.props.currentInstance.metadata.verbose }
                 <MdEdit onClick={() => this.editAliasInstance()} />
               </h1>
-              <div className="closeDiv">
-                <MdClose onClick={() => this.close() }/>
-              </div>
+              <MdClose onClick={() => this.close() }/>
             </header>
             <section className="row">
               <section className="col-xs-4">

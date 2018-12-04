@@ -2,7 +2,7 @@
   background: white;
 
   header {
-    min-height: 125px;
+    min-height: 100px;
     display: flex;
     justify-content: space-between;
     background-color: rgba(123,68,143,1);
@@ -12,11 +12,6 @@
       margin: 0;
       padding: 16px;
       align-items: flex-end;
-    }
-
-    .closeDiv {
-      margin: 10px;
-      margin-top: 15px;
     }
 
     h1 {
