@@ -8,7 +8,7 @@ import UnauthenticatedRoute from "./UnauthenticatedRoute";
 
 export default ({ childProps }) =>
   <Switch>
-    <UnauthenticatedRoute path="/" exact component={Home} props={childProps} />
-      // <UnauthenticatedRoute path="/login" exact component={Login} props={childProps} />
+    <AuthenticatedRoute path="/" exact component={Home} props={childProps} />
+      <UnauthenticatedRoute path="/login" exact component={Login} props={childProps} />
     <Route component={NotFound} />
   </Switch>;
