@@ -12,7 +12,7 @@ export default class InstanceOverview extends React.Component {
   constructor(props) {
     super();
     this.state = {
-        alias: 	props.currentInstance.metadata.verbose,
+        alias: props.currentInstance.metadata.verbose,
 	      value: ''
     }
 	   this.handleChange = this.handleChange.bind(this);
@@ -23,8 +23,9 @@ export default class InstanceOverview extends React.Component {
   }
 
   editAliasInstance() {
-       document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
-       document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
+     // Show input element
+     document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
+     document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
   }
 
   postAliasInstance() {
@@ -32,8 +33,15 @@ export default class InstanceOverview extends React.Component {
   	var instanceIdTemp = this.props.currentInstance.metadata.instanceId;
   	var instanceAliasTemp = this.state.value;
 
+    if ( instanceAliasTemp == '' )
+    {
+      instanceAliasTemp = this.state.alias;
+    }
+    this.props.currentInstance.metadata.verbose = instanceAliasTemp;
+    this.setState({ alias: instanceAliasTemp });
+
     // Hide input element
-     document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
+    document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
     document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
 
   	axios.post( Alias_gateway_url,
@@ -42,8 +50,6 @@ export default class InstanceOverview extends React.Component {
   		InstanceAlias: instanceAliasTemp
     })
   	.then((response) => {
-  		this.props.currentInstance.metadata.verbose = instanceAliasTemp;
-      this.setState({ alias: instanceAliasTemp });
   	})
   	.catch((error) => {
   	  console.log('Alias POST error: ', error);
@@ -59,8 +65,6 @@ export default class InstanceOverview extends React.Component {
     }
 
     render() {
-      console.log(this.props.currentInstance);
-
         var environment;
         switch (this.props.currentInstance.location.environment) {
             case 1:
@@ -119,14 +123,16 @@ export default class InstanceOverview extends React.Component {
         return (
           <article className="c-instanceOverview">
             <header>
-              <div id={"inputAlias_" + this.props.currentInstance.metadata.instanceId} className="input" autoFocus hidden>
-                <input autoFocus type='text' id='userInput' defaultValue={this.props.currentInstance.metadata.verbose} onChange={this.handleChange}/>
+              <div hidden className="inputDiv" id={"inputAlias_" + this.props.currentInstance.metadata.instanceId}>
+                <input type='text' maxLength="20" defaultValue={this.props.currentInstance.metadata.verbose} onChange={this.handleChange}/>
                 <input type='button' onClick={() => this.postAliasInstance() } value='Save'/>
               </div>
               <h1 id={"aliasElement_" + this.props.currentInstance.metadata.instanceId}>{ this.props.currentInstance.metadata.verbose }
-              <MdEdit onClick={() => this.editAliasInstance()} />
+                <MdEdit onClick={() => this.editAliasInstance()} />
               </h1>
-              <MdClose onClick={() => this.close() }/>
+              <div className="closeDiv">
+                <MdClose onClick={() => this.close() }/>
+              </div>
             </header>
             <section className="row">
               <section className="col-xs-4">
