@@ -2,11 +2,17 @@
   background: white;
 
   header {
-    min-height: 125px;
+    min-height: 100px;
     display: flex;
     justify-content: space-between;
     background-color: rgba(123,68,143,1);
     color: white;
+
+    .inputDiv {
+      margin: 0;
+      padding: 16px;
+      align-items: flex-end;
+    }
 
     h1 {
       margin: 0;
@@ -28,10 +34,9 @@
 
   .o-card {
     h2 {
-      margin: 0 0 0.5em 0;
       font-weight: 400;
       &:not(:first-of-type) {
-        margin: 1.5em 0 0.5em 0;
+        margin: 0.5em 0 0.5em 0;
       }
     }
     table {
@@ -39,7 +44,6 @@
       tbody {
         tr {
           td {
-            padding: 0.25em 0;
             &:first-of-type {
               width: 40%;
               font-weight: 300;

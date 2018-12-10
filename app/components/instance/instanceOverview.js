@@ -1,16 +1,60 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios';
 
 import {
-  MdClose
+  MdClose,
+  MdEdit
 } from 'react-icons/md';
-
 
 export default class InstanceOverview extends React.Component {
 
-    constructor(props) {
-        super();
+  constructor(props) {
+    super();
+    this.state = {
+        alias: props.currentInstance.metadata.verbose,
+	      value: ''
     }
+	   this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+
+  editAliasInstance() {
+     // Show input element
+     document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
+     document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
+  }
+
+  postAliasInstance() {
+  	const Alias_gateway_url = "https://9ptub4glw2.execute-api.eu-west-1.amazonaws.com/Testing/";
+  	var instanceIdTemp = this.props.currentInstance.metadata.instanceId;
+  	var instanceAliasTemp = this.state.value;
+
+    if ( instanceAliasTemp == '' )
+    {
+      instanceAliasTemp = this.state.alias;
+    }
+    this.props.currentInstance.metadata.verbose = instanceAliasTemp;
+    this.setState({ alias: instanceAliasTemp });
+
+    // Hide input element
+    document.getElementById("inputAlias_" + this.props.currentInstance.metadata.instanceId).style.display = "none";
+    document.getElementById("aliasElement_" + this.props.currentInstance.metadata.instanceId).style.display = "inherit";
+
+  	axios.post( Alias_gateway_url,
+    {
+  		InstanceId: instanceIdTemp,
+  		InstanceAlias: instanceAliasTemp
+    })
+  	.then((response) => {
+  	})
+  	.catch((error) => {
+  	  console.log('Alias POST error: ', error);
+  	});
+  }
 
     unmount() {
         ReactDOM.unmountComponentAtNode(this.container);
@@ -21,8 +65,6 @@ export default class InstanceOverview extends React.Component {
     }
 
     render() {
-      console.log(this.props.currentInstance);
-
         var environment;
         switch (this.props.currentInstance.location.environment) {
             case 1:
@@ -81,8 +123,12 @@ export default class InstanceOverview extends React.Component {
         return (
           <article className="c-instanceOverview">
             <header>
-              <h1>
-                { this.props.currentInstance.metadata.name }
+              <div hidden className="inputDiv" id={"inputAlias_" + this.props.currentInstance.metadata.instanceId}>
+                <input type='text' maxLength="20" defaultValue={this.props.currentInstance.metadata.verbose} onChange={this.handleChange}/>
+                <input type='button' onClick={() => this.postAliasInstance() } value='Save'/>
+              </div>
+              <h1 id={"aliasElement_" + this.props.currentInstance.metadata.instanceId}>{ this.props.currentInstance.metadata.verbose }
+                <MdEdit onClick={() => this.editAliasInstance()} />
               </h1>
               <MdClose onClick={() => this.close() }/>
             </header>
