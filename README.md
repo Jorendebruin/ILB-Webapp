@@ -3,7 +3,7 @@ AWS EC2 controller
 
 ## Getting started
 
-1. Clone this repo
+1. Clone this repo and go to 'ILB-Webapp' directory
 2. Install dependencies (`npm install`)
 3. Start app using (`gulp`)
 
