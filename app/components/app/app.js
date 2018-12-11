@@ -1,28 +1,72 @@
 import React from 'react';
-import { Router, Link } from 'react-router';
+
+import AWS from 'aws-sdk/global';
+import {Auth} from 'aws-amplify';
+import MainHeader from '../header/header';
+import Routes from '../../Routes';
 
 export default class App extends React.Component {
-  
-  constructor() {
+
+  constructor(props) {
     super();
-    this.state = { showMenu: false }
+    this.state = {
+      children: props.children,
+      showMenu: false,
+      isAuthenticated: false,
+      username: ""
+    }
   }
-  
+
+  async componentDidMount() {
+    try {
+
+    AWS.config.update({
+        region: 'eu-west-1', // your region
+        credentials: new AWS.CognitoIdentityCredentials({
+          IdentityPoolId: 'eu-west-1:ef5b9a78-09d0-4a30-9520-e6ffba3ab9fe'
+        }),
+        apiVersions: {
+          dynamodb: '2012-08-10'
+        }
+      });
+
+      await Auth.currentSession();
+      this.userHasAuthenticated(true);
+    }
+    catch(e) {
+      if (e !== 'No current user') {
+        alert(e);
+      }
+    }
+
+   this.setState({ isAuthenticating: false });
+  }
+
+  userHasAuthenticated = authenticated => {
+    this.setState({ isAuthenticated: authenticated });
+  }
+
+  setUserName = currentUser => {
+    this.setState({ username: currentUser})
+  }
+
+  handleLogoutevent = async event => {
+    await Auth.signOut();
+    this.userHasAuthenticated(false);
+    this.props.history.push("/login");
+  }
+
   render() {
+    const childProps = {
+      isAuthenticated: this.state.isAuthenticated,
+      userHasAuthenticated: this.userHasAuthenticated,
+      username: this.state.username,
+      setUserName: this.setUserName
+    };
     return (
-      <div>
-        <a className="hamburger material-icons" onClick={() => this.setState({ showMenu: !this.state.showMenu })}>menu</a>
-        <nav className={this.state.showMenu ? 'active' : ''}>
-          <h1>App</h1>
-          <ul>
-            <li><Link to="/" activeClassName="active">Home</Link></li>
-            <li><Link to="about" activeClassName="active">About</Link></li>
-            <li><Link to="contact" activeClassName="active">Contact</Link></li>
-          </ul>
-        </nav>
-        <main>
-          {this.props.children}
-        </main>
+      <div className="wrapper">
+        <MainHeader></MainHeader>
+        <Routes childProps={childProps} />
       </div>
     );
   }

@@ -1,0 +1,59 @@
+.c-instanceOverview {
+  background: white;
+
+  header {
+    min-height: 100px;
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(123,68,143,1);
+    color: white;
+
+    .inputDiv {
+      margin: 0;
+      padding: 16px;
+      align-items: flex-end;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 16px;
+      font-weight: 300;
+      font-size: 32px;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    svg {
+      font-size: 28px;
+      padding: 16px;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .o-card {
+    h2 {
+      font-weight: 400;
+      &:not(:first-of-type) {
+        margin: 0.5em 0 0.5em 0;
+      }
+    }
+    table {
+      width: 100%;
+      tbody {
+        tr {
+          td {
+            &:first-of-type {
+              width: 40%;
+              font-weight: 300;
+            }
+            &:nth-of-type(2) {
+              font-weight: 400;
+            }
+          }
+        }
+      }
+    }
+  }
+}
