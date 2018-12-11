@@ -3,6 +3,7 @@ import { shallow, mount } from 'enzyme';
 import AWS from 'aws-sdk/global';
 
 import Instance from './instance';
+import App from '../app/app';
 
 const instance = {
   instance: { startuptime: "2018-11-23T14:45:56.000Z", state: 80, type: "t2.micro" },
@@ -17,11 +18,12 @@ const originalInstance = {
   status: { alarm: 1, health: { amount: 2, passed: 0, state: 0 } }
 };
 
+const home = mount(<App />);
+
 describe("Render component", () => {
   it("renders without crasching", () => {
     // Need mock get request to pass test
     AWS.config.credentials = { get: function() {} };
-
     const wrapper = shallow(<Instance instance={instance} />);
 
     expect(wrapper.exists()).toBe(true);
