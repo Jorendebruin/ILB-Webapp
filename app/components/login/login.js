@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
-import { Auth } from "aws-amplify";
-
-
+import { Auth, Analytics } from "aws-amplify";
 
 export default class Login extends Component {
   constructor(props) {
@@ -19,25 +17,24 @@ export default class Login extends Component {
     return this.state.email.length > 0 && this.state.password.length > 0;
   }
 
-
-   handleChange = event => {
-      this.setState({
+  handleChange = event => {
+    this.setState({
       [event.target.id]: event.target.value
     });
-  }
+  };
 
-
-  handleSubmit = async event =>  {
+  handleSubmit = async event => {
     event.preventDefault();
-  try {
-      await Auth.signIn(this.state.email, this.state.password);
+    try {
+      await Auth.forgotPassword(this.state.email);
+      // await Auth.signIn(this.state.email, this.state.password);
       this.props.userHasAuthenticated(true);
       console.warning("logged in");
       this.props.history.push("/");
-  } catch (e){
+    } catch (e) {
       console.error(e.message);
-  }
-  }
+    }
+  };
 
   render() {
     return (
@@ -47,7 +44,7 @@ export default class Login extends Component {
             <ControlLabel>Email</ControlLabel>
             <FormControl
               autoFocus
-              type="email"
+              type="string"
               value={this.state.email}
               onChange={this.handleChange}
             />
