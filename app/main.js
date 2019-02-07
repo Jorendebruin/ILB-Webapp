@@ -1,10 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
-import Amplify from 'aws-amplify';
-import config from './lib/constants/config';
-import App from './components/app/app';
-
+import Amplify from "aws-amplify";
+import config from "./lib/constants/config";
+import App from "./components/app/app";
 
 Amplify.configure({
   Auth: {
@@ -13,12 +12,21 @@ Amplify.configure({
     userPoolId: config.cognito.USER_POOL_ID,
     identityPoolId: config.cognito.IDENTITY_POOL_ID,
     userPoolWebClientId: config.cognito.APP_CLIENT_ID
+  },
+  API: {
+    endpoints: [
+      {
+        name: "ILBTestAPI",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION
+      }
+    ]
   }
 });
 
-
-ReactDOM.render((
+ReactDOM.render(
   <Router>
     <App />
-  </Router>
-), document.getElementById('app'));
+  </Router>,
+  document.getElementById("app")
+);
