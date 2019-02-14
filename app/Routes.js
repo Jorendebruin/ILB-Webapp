@@ -13,19 +13,12 @@ export default ({ childProps }) => {
   return (
     <Router history={history}>
       <Switch>
+        {/* Verwijder deze route voor authenticatie en Login, en uncomment de lines hieronder */}
+        <Route exact path="/" component={Home} props={childProps} />
+
         {/* Uncomment de volgende lines voor authenticatie/login */}
-        <AuthenticatedRoute
-          exact
-          path="/"
-          component={Home}
-          props={childProps}
-        />
-        <UnauthenticatedRoute
-          exact
-          path="/login"
-          component={Login}
-          props={childProps}
-        />
+        {/* <AuthenticatedRoute exact path="/" component={Home} props={childProps} /> */}
+        {/* <UnauthenticatedRoute exact path="/login" component={Login} props={childProps} /> */}
         <Route component={NotFound} />
       </Switch>
     </Router>

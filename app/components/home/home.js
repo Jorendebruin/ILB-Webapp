@@ -1,7 +1,7 @@
 import React from "react";
 
 import AWS from "aws-sdk/global";
-
+import getToken from "../../adalConfig";
 import axios from "axios";
 import { Auth } from "aws-amplify";
 import PahoMQTT from "paho-mqtt";
@@ -101,8 +101,7 @@ export default class Home extends React.Component {
   }
 
   async componentDidMount() {
-    const session = await Auth.currentSession();
-    console.log(session.idToken.jwtToken);
+    console.log(getToken);
     axios
       .get(API_GATEWAY_EC2 + "populate/", {
         headers: {

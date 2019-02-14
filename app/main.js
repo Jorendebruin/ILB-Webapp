@@ -1,10 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
-import Amplify from 'aws-amplify';
-import config from './lib/constants/config';
-import App from './components/app/app';
+import Amplify from "aws-amplify";
+import config from "./lib/constants/config";
+import App from "./components/app/app";
+import { runWithAdal } from "react-adal";
+import { authContext } from "./adalConfig";
 
+const DO_NOT_LOGIN = false;
 
 Amplify.configure({
   Auth: {
@@ -16,9 +19,15 @@ Amplify.configure({
   }
 });
 
-
-ReactDOM.render((
-  <Router>
-    <App />
-  </Router>
-), document.getElementById('app'));
+runWithAdal(
+  authContext,
+  () => {
+    ReactDOM.render(
+      <Router>
+        <App />
+      </Router>,
+      document.getElementById("app")
+    );
+  },
+  DO_NOT_LOGIN
+);
